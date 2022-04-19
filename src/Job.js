@@ -435,18 +435,21 @@ const Job = (props) => {
         const jobInfo = (job.prinfo) ? `PR #${job.prinfo.number}` : refRepr(job.ref)
         document.title = `Murdock - ${jobInfo} - ${job.commit.sha.slice(0, 7)}`;
 
-        const favicon = getFaviconElement();
+        let favicon_href = "/favicon.png";
         if (job.state === "passed") {
-            favicon.href = "/passed.png";
+            favicon_href = "/passed.png";
             document.title += " - Passed";
         }
         else if (job.state === "errored") {
-            favicon.href = "/failed.png";
+            favicon_href = "/failed.png";
             document.title += " - Failed";
         }
-        else {
-            favicon.href = "/favicon.png";
+
+        const favicon = getFaviconElement();
+        if (favicon) {
+            favicon.href = favicon_href;
         }
+
 
         if (["errored", "passed"].includes(job.state)) {
             if (!builds) {

@@ -162,7 +162,9 @@ class JobList extends Component {
         }
 
         const favicon = document.getElementById("favicon");
-        favicon.href = "/favicon.ico";
+        if (favicon) {
+            favicon.href = "/favicon.ico";   
+        }
     }
 
     isAllClicked() {
