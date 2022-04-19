@@ -1,11 +1,10 @@
 # murdock-html
 
-Murdock pages for RIOT.
+A ReactJS single page application for the Murdock continuous integration server.
 
 ## Development
 
-The Murdock pages are a single page application developed using the
-[React framework](https://reactjs.org).
+This application is developed using the [React framework](https://reactjs.org).
 
 Only thing you need is to install [npm](https://npmjs.com): just
 [follow the instructions](https://www.npmjs.com/get-npm).
