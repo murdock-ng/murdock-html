@@ -11,6 +11,7 @@ import { CommitWithAuthorCol, DateCol, RuntimeCol } from './components';
 import { JobBuilds, JobTests } from './JobResults';
 import { JobOutput } from './JobOutput';
 import { JobStats } from './JobStats';
+import { JobArtifacts } from './JobArtifacts';
 
 const JobTitle = (props) => {
 
@@ -418,7 +419,7 @@ const Job = (props) => {
             return;
         }
 
-        if (!["builds", "tests", "output", "details", "stats"].includes(props.tab)) {
+        if (!["builds", "tests", "output", "artifacts", "details", "stats"].includes(props.tab)) {
             if (builds && builds.length && ["passed", "errored"].includes(job.state)) {
                 setActivePanel("builds");
             } else if (jobStatus && jobStatus.failed_builds && (jobStatus.failed_builds.length > 0) && ["stopped", "running"].includes(job.state)) {
@@ -491,6 +492,8 @@ const Job = (props) => {
         job.env
     );
 
+    const artifactsTabAvailable = (job && job.artifacts);
+
     const statsTabAvailable = stats && stats.total_jobs > 0;
 
     const hasFailedBuilds = (
@@ -542,10 +545,10 @@ const Job = (props) => {
                                 <i className="bi-file-text-fill text-dark me-1"></i>Output
                             </button>
                         </li>}
-                        {statsTabAvailable && (
+                        {artifactsTabAvailable && (
                         <li className="nav-item">
-                            <button className={`nav-link ${(activePanel === "stats") ? "active" : ""}`} id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab" aria-controls="stats" aria-selected="false" onClick={() => {history.push(`/details/${props.url}/stats`)}}>
-                                <i className={`bi-bar-chart-line text-dark me-1`}></i>Stats
+                            <button className={`nav-link ${(activePanel === "artifacts") ? "active" : ""}`} id="artifacts-tab" data-bs-toggle="tab" data-bs-target="#artifacts" type="button" role="tab" aria-controls="artifacts" aria-selected="false" onClick={() => {history.push(`/details/${props.url}/artifacts`)}}>
+                                <i className="bi-files text-dark me-1"></i>Artifacts
                             </button>
                         </li>
                         )}
@@ -553,6 +556,13 @@ const Job = (props) => {
                         <li className="nav-item">
                             <button className={`nav-link ${(activePanel === "details") ? "active" : ""}`} id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="false" onClick={() => {history.push(`/details/${props.url}/details`)}}>
                                 <i className="bi-info-circle text-dark me-1"></i>Details
+                            </button>
+                        </li>
+                        )}
+                        {statsTabAvailable && (
+                        <li className="nav-item">
+                            <button className={`nav-link ${(activePanel === "stats") ? "active" : ""}`} id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab" aria-controls="stats" aria-selected="false" onClick={() => {history.push(`/details/${props.url}/stats`)}}>
+                                <i className={`bi-bar-chart-line text-dark me-1`}></i>Stats
                             </button>
                         </li>
                         )}
@@ -569,6 +579,9 @@ const Job = (props) => {
                         </div>
                         <div className={`tab-pane ${(activePanel === "details") ? "show active" : ""}`} id="details" role="tabpanel" aria-labelledby="details-tab">
                             {detailsTabAvailable && <JobDetails job={job} />}
+                        </div>
+                        <div className={`tab-pane ${(activePanel === "artifacts") ? "show active" : ""}`} id="artifacts" role="tabpanel" aria-labelledby="artifacts-tab">
+                            {artifactsTabAvailable && <JobArtifacts job={job} />}
                         </div>
                         <div className={`tab-pane ${(activePanel === "stats") ? "show active" : ""}`} id="stats" role="tabpanel" aria-labelledby="stats-tab">
                             {statsTabAvailable && <JobStats stats={stats} />}
