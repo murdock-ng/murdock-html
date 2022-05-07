@@ -57,8 +57,8 @@ export const JobItem = (props) => {
             },
         )
         .then(() => {
-            const action = (type === "queued") ? "canceled" : "aborted";
-            props.notify(props.job.uid, "info", `Job ${props.job.uid.substring(0, 7)} ${jobContext} ${action}`)
+            const action = (type === "queued") ? "Cancelling" : "Stopping";
+            props.notify(props.job.uid, "info", `${action} job ${props.job.uid.substring(0, 7)} ${jobContext}`)
         })
         .catch(error => {
             const action = (type === "queued") ? "cancel" : "abort";
@@ -87,8 +87,8 @@ export const JobItem = (props) => {
                 },
             },
         )
-        .then(() => {
-            props.notify(props.job.uid, "info", `Job ${props.job.uid.substring(0, 7)} ${jobContext} restarted`)
+        .then(res => {
+            props.notify(props.job.uid, "info", `Job ${res.data.uid.substring(0, 7)} ${jobContext} started`);
         })
         .catch(error => {
             props.notify(props.job.uid, "danger", `Failed to restart job ${props.job.uid.substring(0, 7)} ${jobContext}`)

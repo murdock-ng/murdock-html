@@ -41,8 +41,8 @@ const JobTitle = (props) => {
             },
         )
         .then(() => {
-            const action = (type === "queued") ? "canceled" : "aborted";
-            props.notify(props.job.uid, "info", `Job ${props.job.uid.substring(0, 7)} ${jobContext} ${action}`)
+            const action = (type === "queued") ? "Cancelling" : "Stopping";
+            props.notify(props.job.uid, "info", `${action} job ${props.job.uid.substring(0, 7)} ${jobContext}`)
         })
         .catch(error => {
             const action = (type === "queued") ? "cancel" : "abort";
@@ -71,9 +71,9 @@ const JobTitle = (props) => {
                 },
             },
         )
-        .then(() => {
-            props.notify(props.job.uid, "info", `Job ${props.job.uid.substring(0, 7)} ${jobContext} restarted`);
-            history.push("/");
+        .then(res => {
+            props.notify(props.job.uid, "info", `Job ${res.data.uid.substring(0, 7)} ${jobContext} started`);
+            history.push(`/details/${res.data.uid}`);
         })
         .catch(error => {
             props.notify(props.job.uid, "danger", `Failed to restart job ${props.job.uid.substring(0, 7)} ${jobContext}`)
@@ -419,6 +419,12 @@ const Job = (props) => {
             return;
         }
 
+        /* Fetch job if current job doesn't match the url */
+        if (job.uid !== props.url) {
+            fetchJob();
+            return;
+        }
+
         if (!["builds", "tests", "output", "artifacts", "details", "stats"].includes(props.tab)) {
             if (builds && builds.length && ["passed", "errored"].includes(job.state)) {
                 setActivePanel("builds");
@@ -472,7 +478,7 @@ const Job = (props) => {
     }, [
         buildFailures, builds, fetchBuildFailures, fetchBuilds, fetchJob,
         fetchStats, fetchTestFailures, fetchTests, fetched, job, stats,
-        testFailures, tests, history, jobStatus, props.tab
+        testFailures, tests, history, jobStatus, props.tab, props.url
     ]);
 
     const buildsTabAvailable = (
