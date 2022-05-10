@@ -207,24 +207,31 @@ export const JobItem = (props) => {
                 {props.job.state === "queued" && <span className="align-middle">{" - "}</span>}
             </td>
             <td className="text-end pe-3" style={{ width: "30px" }}>
-                <div className="dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title={stateText[props.job.state]}>
-                    <button className="btn dropdown-toggle p-0 d-none d-sm-block" type="button" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
+                {(props.permissions === "push") ? (
+                    <div className="dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title={stateText[props.job.state]}>
+                        <button className="btn dropdown-toggle p-0 d-none d-sm-block" type="button" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{stateText[props.job.state]}</span>
+                        </button>
+                        <button className="btn dropdown-toggle p-0 d-block d-sm-none" type="button" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{cardIcon[props.job.state]}</span>
+                        </button>
+                        <ul className="dropdown-menu dropdown-menu-end p-0" style={{minWidth: "20px"}} aria-labelledby="dropdownMenuActions">
+                            {cancelAction}
+                            {stopAction}
+                            {restartAction}
+                        </ul>
+                    </div>
+                ) : (
+                    <>
+                    <div className="p-0 d-none d-sm-block">
                     <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{stateText[props.job.state]}</span>
-                    </button>
-                    <button className="btn dropdown-toggle p-0 d-block d-sm-none" type="button" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
+                    </div>
+                    <div className="p-0 d-block d-sm-none">
                     <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{cardIcon[props.job.state]}</span>
-                    </button>
-                    <ul className="dropdown-menu dropdown-menu-end p-0" style={{minWidth: "20px"}} aria-labelledby="dropdownMenuActions">
-                        <li>
-                        <a className="dropdown-item btn-sm text-end" href={`/details/${props.job.uid}`}>
-                            <i className="bi-eye me-1"></i><span>Details</span>
-                        </a>
-                        </li>
-                        {cancelAction}
-                        {stopAction}
-                        {restartAction}
-                    </ul>
-                </div>
+                    </div>
+                    </>
+                )
+                }
             </td>
         </tr>
     );
