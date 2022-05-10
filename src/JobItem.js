@@ -154,6 +154,17 @@ export const JobItem = (props) => {
         jobItemTitleTooltip += `\n\nState: ${props.job.prinfo.state}`
     }
 
+    let githubIconColor = "text-dark";
+    if (props.job.prinfo && props.job.prinfo.hasOwnProperty("is_merged") && props.job.prinfo.is_merged) {
+        githubIconColor = "text-info";
+    }
+    else if (props.job.prinfo && props.job.prinfo.hasOwnProperty("state") && props.job.prinfo.state === "closed") {
+        githubIconColor = "text-danger";
+    }
+    else if (props.job.prinfo && props.job.prinfo.hasOwnProperty("state") && props.job.prinfo.state === "open") {
+        githubIconColor = "text-success";
+    }
+
     return (
         <tr>
             <td style={{ width: "30px" }}>
@@ -162,7 +173,7 @@ export const JobItem = (props) => {
             </td>
             <td style={{ width: "800px" }}>
                 <span className="align-middle" data-bs-toggle="tooltip" data-bs-placement="bottom" title={jobItemTitleTooltip}>
-                    <i className={`bi-github ${(props.job.prinfo && props.job.prinfo.hasOwnProperty("is_merged") && props.job.prinfo.is_merged) ? "text-info": ""} me-1`}></i>
+                    <i className={`bi-github ${githubIconColor} me-1`}></i>
                     <a className="link-underline-hover text-dark me-1" href={titleUrl} target="_blank" rel="noreferrer noopener">
                         {props.job.prinfo ? `PR #${props.job.prinfo.number}: ${title}`: `${title}`}
                     </a>
