@@ -168,7 +168,7 @@ export const JobItem = (props) => {
     return (
         <tr>
             <td style={{ width: "30px" }}>
-                <a className="btn link-underline-hover p-0 text-primary d-none d-sm-block" href={`/details/${props.job.uid}`}>{`${props.job.uid.substring(0, 7)}`}</a>
+                <a className="btn link-underline-hover p-0 text-primary d-none d-sm-block" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title="Job details">{`${props.job.uid.substring(0, 7)}`}</a>
                 <a className="btn link-underline-hover p-0 text-primary d-block d-sm-none" href={`/details/${props.job.uid}`}>{`${props.job.uid.substring(0, 4)}`}</a>
             </td>
             <td style={{ width: "800px" }}>
@@ -180,7 +180,9 @@ export const JobItem = (props) => {
                 </span>
             </td>
             <td style={{ width: "250px" }}>
+                <a className="btn align-middle p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
                 <DateShortElem date={jobDate} />
+                </a>
             </td>
             <td className="text-center d-none d-sm-block" style={{ width: "200px" }}>
                 {(props.job.state === "running") && (
@@ -203,8 +205,16 @@ export const JobItem = (props) => {
                         </>
                     )
                 )}
-                {["passed", "errored", "stopped"].includes(props.job.state) && <span className="align-middle">{`${moment.duration(props.job.runtime * -1000).humanize()}`}</span>}
-                {props.job.state === "queued" && <span className="align-middle">{" - "}</span>}
+                {["passed", "errored", "stopped"].includes(props.job.state) && (
+                    <a className="btn align-middle p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+                    <span className="align-middle">{`${moment.duration(props.job.runtime * -1000).humanize()}`}</span>
+                    </a>
+                )}
+                {props.job.state === "queued" && (
+                    <a className="btn align-middle p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+                    <span className="align-middle">{" - "}</span>
+                    </a>
+                )}
             </td>
             <td className="text-end pe-3" style={{ width: "30px" }}>
                 {(props.permissions === "push") ? (
