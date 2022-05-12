@@ -328,7 +328,7 @@ class JobList extends Component {
                         </div>
                     )
                 }
-                {(this.state.isFetched && this.state.jobs.length && this.state.jobs.length === this.queryParams.jobsDisplayedLimit) ? <ShowMore onclick={this.displayMore} /> : null}
+                {(this.state.isFetched && this.state.jobs.length >= this.state.queryParams.jobsDisplayedLimit) ? <ShowMore onclick={this.displayMore} /> : null}
             <Websocket
                 url={murdockWsUrl}
                 onOpen={this.handleWsOpen}
