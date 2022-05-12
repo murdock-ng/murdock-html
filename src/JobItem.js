@@ -179,12 +179,12 @@ export const JobItem = (props) => {
                     </a>
                 </span>
             </td>
-            <td style={{ width: "250px" }}>
-                <a className="btn align-middle p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+            <td style={{ width: "250px" }} className="px-0">
+                <a className="btn text-start p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
                 <DateShortElem date={jobDate} />
                 </a>
             </td>
-            <td className="text-center d-none d-sm-block" style={{ width: "200px" }}>
+            <td className="text-center d-none d-sm-block px-0" style={{ width: "250px" }}>
                 {(props.job.state === "running") && (
                     (buildInProgress) ? (
                         <a className="btn align-middle" style={{width: "100%"}} href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={runningJobStatus}>
@@ -206,13 +206,13 @@ export const JobItem = (props) => {
                     )
                 )}
                 {["passed", "errored", "stopped"].includes(props.job.state) && (
-                    <a className="btn align-middle p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
-                    <span className="align-middle">{`${moment.duration(props.job.runtime * -1000).humanize()}`}</span>
+                    <a className="btn p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+                    <span>{`${moment.duration(props.job.runtime * -1000).humanize()}`}</span>
                     </a>
                 )}
                 {props.job.state === "queued" && (
-                    <a className="btn align-middle p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
-                    <span className="align-middle">{" - "}</span>
+                    <a className="btn p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+                    <span>{" - "}</span>
                     </a>
                 )}
             </td>
