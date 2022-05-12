@@ -99,10 +99,9 @@ class JobList extends Component {
         }
         axios.get(`${murdockHttpBaseUrl}/jobs?${queryString}`)
             .then(res => {
-                const jobs = res.data;
                 const newState = { 
                     isFetched : true,
-                    jobs: jobs,
+                    jobs: res.data,
                     queryParams: this.queryParams,
                 };
                 this.setState(newState);
@@ -114,31 +113,31 @@ class JobList extends Component {
     }
 
     handleWsData(data) {
+        if (!this.state.isFetched) {
+            return;
+        }
+
         const msg = JSON.parse(data);
         if (msg.cmd === "reload") {
             this.fetchJobs();
         }
-        else if (msg.cmd === "status" && this.state.isFetched) {
-            if (this.state.jobs.length) {
-                let jobs = this.state.jobs.slice();
-                for (let idx = 0; idx < jobs.length; idx++) {
-                    if (jobs[idx].uid === msg.uid) {
-                        jobs[idx].status = msg.status;
-                    }
+        else if (msg.cmd === "status") {
+            let jobs = this.state.jobs.slice();
+            for (let idx = 0; idx < jobs.length; idx++) {
+                if (jobs[idx].uid === msg.uid) {
+                    jobs[idx].status = msg.status;
                 }
-                this.setState({jobs: jobs});
             }
+            this.setState({jobs: jobs});
         }
-        else if (msg.cmd === "output" && this.state.isFetched) {
-            if (this.state.jobs.length) {
-                let jobs = this.state.jobs.slice();
-                for (let idx = 0; idx < jobs.length; idx++) {
-                    if (jobs[idx].uid === msg.uid) {
-                        jobs[idx].output += msg.line;
-                    }
+        else if (msg.cmd === "output") {
+            let jobs = this.state.jobs.slice();
+            for (let idx = 0; idx < jobs.length; idx++) {
+                if (jobs[idx].uid === msg.uid) {
+                    jobs[idx].output += msg.line;
                 }
-                this.setState({jobs: jobs});
             }
+            this.setState({jobs: jobs});
         }
     }
 
