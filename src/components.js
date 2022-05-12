@@ -102,7 +102,7 @@ export const CommitWithAuthorCol = (props) => {
     return (
         <>
             <i className="bi-tag me-1"></i>
-            <a className={`link-underline-hover text-${props.color} me-1`} href={`https://github.com/${process.env.REACT_APP_GITHUB_REPO}/commit/${props.commit}`} target="_blank" rel="noreferrer noopener">{props.commit.substring(0, 7)}</a>
+            <a className={`link-underline-hover text-${props.color} me-1`} href={`https://github.com/${process.env.REACT_APP_GITHUB_REPO}/commit/${props.commit}`} target="_blank" rel="noreferrer noopener" data-bs-toggle="tooltip" data-bs-placement="bottom" title={props.commit}>{props.commit.substring(0, 7)}</a>
             (<i className="bi-person me-1"></i>{props.author})
         </>
     );

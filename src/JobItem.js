@@ -168,7 +168,7 @@ export const JobItem = (props) => {
     return (
         <tr>
             <td style={{ width: "30px" }}>
-                <a className="btn link-underline-hover p-0 text-primary d-none d-sm-block" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title="Job details">{`${props.job.uid.substring(0, 7)}`}</a>
+                <a className="btn link-underline-hover p-0 text-primary d-none d-sm-block" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.job.uid}`}>{`${props.job.uid.substring(0, 7)}`}</a>
                 <a className="btn link-underline-hover p-0 text-primary d-block d-sm-none" href={`/details/${props.job.uid}`}>{`${props.job.uid.substring(0, 4)}`}</a>
             </td>
             <td style={{ width: "800px" }}>
