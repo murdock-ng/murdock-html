@@ -197,12 +197,12 @@ export const JobItem = (props) => {
                             </div>
                         </a>
                     ) : (
-                        <>
+                        <a className="btn p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
                         <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                         {(props.job.status && props.job.status.status) ? (
                         <span className="fst-italic">{`${props.job.status.status}...`}</span>
                         ) :null}
-                        </>
+                        </a>
                     )
                 )}
                 {["passed", "errored", "stopped"].includes(props.job.state) && (
