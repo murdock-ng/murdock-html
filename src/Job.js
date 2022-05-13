@@ -287,6 +287,10 @@ const Job = (props) => {
 
     const fetchJob = useCallback(
         () => {
+            setBuilds(null);
+            setBuildFailures(null);
+            setTests(null);
+            setTestFailures(null);
             axios.get(`${murdockHttpBaseUrl}/job/${props.url}`)
             .then(res => {
                 setJob(res.data);
