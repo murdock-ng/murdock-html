@@ -49,7 +49,7 @@ const JobsTable = (props) => {
             </tr>
             </thead>
             <tbody>
-                {props.jobs.map(job => <JobItem key={job.uid} job={job} user={props.user} small={props.small} permissions={props.userPermissions} notify={props.notify}/>)}
+                {props.jobs.map(job => <JobItem key={job.uid} job={job} user={props.user} small={props.small} permissions={props.permissions} notify={props.notify}/>)}
             </tbody>
         </table>
     )
