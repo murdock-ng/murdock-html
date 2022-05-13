@@ -291,6 +291,7 @@ const Job = (props) => {
             setBuildFailures(null);
             setTests(null);
             setTestFailures(null);
+            setStats(null);
             axios.get(`${murdockHttpBaseUrl}/job/${props.url}`)
             .then(res => {
                 setJob(res.data);
