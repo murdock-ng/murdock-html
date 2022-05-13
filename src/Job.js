@@ -420,7 +420,7 @@ const Job = (props) => {
         }
 
         /* Fetch job if current job doesn't match the url */
-        if (job.uid !== props.url) {
+        if (job.uid !== props.url && !(props.url.startsWith("branch/") || props.url.startsWith("pr/") || props.url.startsWith("tag/"))) {
             fetchJob();
             return;
         }
