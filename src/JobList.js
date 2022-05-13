@@ -29,6 +29,32 @@ import { JobItem } from './JobItem';
 import { LoadingSpinner, ShowMore } from './components';
 import { itemsDisplayedStep, murdockHttpBaseUrl, murdockWsUrl, cardColor } from './constants';
 
+const JobsTableSmall = (props) => {
+    return (
+        <JobsTable small={true} {...props} />
+    )
+
+}
+
+const JobsTable = (props) => {
+    return (
+        <table className="table table-sm table-striped table-hover">
+            <thead>
+            <tr>
+                <th scope="col" className="text-left">Job</th>
+                <th scope="col" className="text-left">Title</th>
+                <th scope="col" className="text-left">Date</th>
+                {(!props.small) && <th scope="col" className="text-center px-0">Duration</th>}
+                <th scope="col" className="text-center">State</th>
+            </tr>
+            </thead>
+            <tbody>
+                {props.jobs.map(job => <JobItem key={job.uid} job={job} user={props.user} small={props.small} permissions={props.userPermissions} notify={props.notify}/>)}
+            </tbody>
+        </table>
+    )
+}
+
 class JobList extends Component {
     constructor(props) {
         super(props);
@@ -306,20 +332,14 @@ class JobList extends Component {
                     (!this.state.isFetched) ? (
                         <LoadingSpinner />
                     ) : (this.state.jobs.length) ? (
-                    <table className="table table-sm table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col" className="text-left">Job</th>
-                            <th scope="col" className="text-left">Title</th>
-                            <th scope="col" className="text-left">Date</th>
-                            <th scope="col" className="text-center d-none d-sm-block px-0">Duration</th>
-                            <th scope="col" className="text-center">State</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.state.jobs.map(job => <JobItem key={job.uid} job={job} user={this.props.user} permissions={this.props.userPermissions} notify={this.props.notify}/>)}
-                    </tbody>
-                    </table>
+                    <>
+                    <div className="d-block d-sm-none">
+                        <JobsTableSmall jobs={this.state.jobs} user={this.props.user} permissions={this.props.userPermissions} notify={this.props.notify}/>
+                    </div>
+                    <div className="d-none d-sm-block">
+                        <JobsTable jobs={this.state.jobs} user={this.props.user} permissions={this.props.userPermissions} notify={this.props.notify}/>
+                    </div>
+                    </>
                     ) : (
                         <div className="row my-5 justify-content-center">
                             <div className="col col-md-3 text-center">

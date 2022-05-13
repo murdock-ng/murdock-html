@@ -168,8 +168,12 @@ export const JobItem = (props) => {
     return (
         <tr>
             <td style={{ width: "30px" }}>
-                <a className="btn link-underline-hover p-0 text-primary d-none d-sm-block" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.job.uid}`}>{`${props.job.uid.substring(0, 7)}`}</a>
-                <a className="btn link-underline-hover p-0 text-primary d-block d-sm-none" href={`/details/${props.job.uid}`}>{`${props.job.uid.substring(0, 4)}`}</a>
+                {(props.small) ? (
+                    <a className="btn link-underline-hover p-0 text-primary" href={`/details/${props.job.uid}`}>{`${props.job.uid.substring(0, 4)}`}</a>
+                ) : (
+                    <a className="btn link-underline-hover p-0 text-primary" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.job.uid}`}>{`${props.job.uid.substring(0, 7)}`}</a>
+                )
+                }
             </td>
             <td style={{ width: "800px" }}>
                 <span className="align-middle" data-bs-toggle="tooltip" data-bs-placement="bottom" title={jobItemTitleTooltip}>
@@ -184,7 +188,8 @@ export const JobItem = (props) => {
                 <DateShortElem date={jobDate} />
                 </a>
             </td>
-            <td className="text-center d-none d-sm-block px-0" style={{ width: "250px" }}>
+            {(!props.small) && (
+            <td className="text-center px-0" style={{ width: "250px" }}>
                 {(props.job.state === "running") && (
                     (buildInProgress) ? (
                         <a className="btn align-middle" style={{width: "100%"}} href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={runningJobStatus}>
@@ -216,15 +221,19 @@ export const JobItem = (props) => {
                     </a>
                 )}
             </td>
+            )}
             <td className="text-end pe-3" style={{ width: "30px" }}>
                 {(props.permissions === "push") ? (
                     <div className="dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title={stateText[props.job.state]}>
-                        <button className="btn dropdown-toggle p-0 d-none d-sm-block" type="button" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{stateText[props.job.state]}</span>
-                        </button>
+                        {(props.small) ? (
                         <button className="btn dropdown-toggle p-0 d-block d-sm-none" type="button" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
                         <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{cardIcon[props.job.state]}</span>
                         </button>
+                        ) : (
+                        <button className="btn dropdown-toggle p-0 d-none d-sm-block" type="button" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{stateText[props.job.state]}</span>
+                        </button>
+                        )}
                         <ul className="dropdown-menu dropdown-menu-end p-0" style={{minWidth: "20px"}} aria-labelledby="dropdownMenuActions">
                             {cancelAction}
                             {stopAction}
@@ -233,12 +242,11 @@ export const JobItem = (props) => {
                     </div>
                 ) : (
                     <>
-                    <div className="p-0 d-none d-sm-block">
-                    <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{stateText[props.job.state]}</span>
-                    </div>
-                    <div className="p-0 d-block d-sm-none">
-                    <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{cardIcon[props.job.state]}</span>
-                    </div>
+                    {(props.small) ? (
+                        <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{cardIcon[props.job.state]}</span>
+                    ) : (
+                        <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{stateText[props.job.state]}</span>
+                    )}
                     </>
                 )
                 }
