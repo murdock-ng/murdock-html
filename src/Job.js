@@ -476,7 +476,7 @@ const Job = (props) => {
             if (!testFailures) {
                 fetchTestFailures();
             }
-            if (!testFailures) {
+            if (!stats) {
                 fetchStats();
             }
         }
