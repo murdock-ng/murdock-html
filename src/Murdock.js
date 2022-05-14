@@ -21,7 +21,7 @@
  * Author: Alexandre Abadie <alexandre.abadie@inria.fr>
  */
 
-import { Suspense, lazy, Component } from 'react';
+import { Suspense, lazy, useState, useEffect, useCallback } from 'react';
 import {
     BrowserRouter as Router,
     Switch,
@@ -34,8 +34,8 @@ import axios from 'axios';
 import GithubUserButton from './GithubUserButton';
 
 import {
-  defaultLoginUser,
-  getUserFromStorage, removeUserFromStorage, storeUserToStorage
+    defaultLoginUser,
+    getUserFromStorage, removeUserFromStorage, storeUserToStorage
 } from './userStorage';
 import { LoadingSpinner } from './components';
 
@@ -54,116 +54,110 @@ const MurdockNavBar = (props) => {
     const role = (props.userPermissions === "push") ? "Maintainer" : "User";
 
     return (
-        <>
-          <nav className="navbar navbar-expand-lg sticky-top shadow navbar-dark bg-dark">
+        <nav className="navbar navbar-expand-lg sticky-top shadow navbar-dark bg-dark">
             <div className="container-fluid">
-              <a className="navbar-brand" href={`https://github.com/${process.env.REACT_APP_GITHUB_REPO}`} target="_blank" rel="noopener noreferrer"><i className="bi-github me-1"></i>{process.env.REACT_APP_GITHUB_REPO}</a>
-              <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-              </button>
-              <div className="collapse navbar-collapse" id="navbarNav">
-                <ul className="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
-                  <li className="nav-item">
-                    <Link to="/" className={location.pathname === "/" ? "nav-link active": "nav-link"}>Dashboard</Link>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href={`${process.env.REACT_APP_MURDOCK_HTTP_BASE_URL}/api`} target="_blank" rel="noopener noreferrer">API <i className="bi-box-arrow-up-right"></i></a>
-                  </li>
-                </ul>
-                <div className="d-flex align-items-center">
-                  <GithubUserButton user={props.user} role={role} onLoginSuccess={props.onLoginSuccess} onLoginFailure={props.onLoginFailure} onLogout={props.onLogout} />
+                <a className="navbar-brand" href={`https://github.com/${process.env.REACT_APP_GITHUB_REPO}`} target="_blank" rel="noopener noreferrer"><i className="bi-github me-1"></i>{process.env.REACT_APP_GITHUB_REPO}</a>
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+                        <li className="nav-item">
+                            <Link to="/" className={location.pathname === "/" ? "nav-link active": "nav-link"}>Dashboard</Link>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href={`${process.env.REACT_APP_MURDOCK_HTTP_BASE_URL}/api`} target="_blank" rel="noopener noreferrer">API <i className="bi-box-arrow-up-right"></i></a>
+                        </li>
+                    </ul>
+                    <div className="d-flex align-items-center">
+                        <GithubUserButton user={props.user} role={role} onLoginSuccess={props.onLoginSuccess} onLoginFailure={props.onLoginFailure} onLogout={props.onLogout} />
+                    </div>
                 </div>
-              </div>
             </div>
-          </nav>
-        </>
+        </nav>
     );
 }
 
-class Murdock extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-        user: getUserFromStorage(),
-        userPermissions: "unknown",
-        alerts: [],
-    };
-    this.onLoginSuccess = this.onLoginSuccess.bind(this);
-    this.onLoginFailure = this.onLoginFailure.bind(this);
-    this.onLogout = this.onLogout.bind(this);
-    this.fetchUserPermissions = this.fetchUserPermissions.bind(this);
-    this.notify = this.notify.bind(this);
-  };
+const Murdock = () => {
+    const [ user, setUser ] = useState(getUserFromStorage());
+    const [ userPermissions, setUserPermissions ] = useState("unknown");
+    const [ alerts, setAlerts ] = useState([]);
 
-  onLoginSuccess(response) {
-    const loggedUser = {
-        login: response.profile.name,
-        avatarUrl: response.profile.profilePicURL,
-        token: response.token.accessToken,
-        expiresAt: response.token.expiresAt,
-    }
-    storeUserToStorage(loggedUser);
-    this.fetchUserPermissions(loggedUser);
-  };
-
-  onLoginFailure(error) {
-    console.error(error);
-    this.setState({user: defaultLoginUser, userPermissions: "no"});
-  };
-
-  onLogout() {
-    removeUserFromStorage(this.state.user);
-    this.setState({user: defaultLoginUser, userPermissions: "no"});
-  };
-
-  fetchUserPermissions(loggedUser) {
-    if (loggedUser === "anonymous") {
-      this.setState({user: defaultLoginUser, userPermissions: "no"});
-      return;
+    const onLoginSuccess = (response) => {
+        const loggedUser = {
+            login: response.profile.name,
+            avatarUrl: response.profile.profilePicURL,
+            token: response.token.accessToken,
+            expiresAt: response.token.expiresAt,
+        }
+        storeUserToStorage(loggedUser);
+        fetchUserPermissions(loggedUser);
     }
 
-    axios.get(
-      `https://api.github.com/repos/${process.env.REACT_APP_GITHUB_REPO}`,
-      { headers: {Authorization: `token ${loggedUser.token}`}},
+    const onLoginFailure = (error) => {
+        console.error(error);
+        setUserPermissions("no");
+        setUser(defaultLoginUser);
+    }
+
+    const onLogout = () => {
+        removeUserFromStorage(user);
+        setUserPermissions("no");
+        setUser(defaultLoginUser);
+    }
+
+    const fetchUserPermissions =  useCallback(
+        (loggedUser) => {
+            if (loggedUser === "anonymous") {
+                setUserPermissions("no");
+                setUser(defaultLoginUser);
+                return;
+            }
+
+            axios.get(
+              `https://api.github.com/repos/${process.env.REACT_APP_GITHUB_REPO}`,
+              { headers: {Authorization: `token ${loggedUser.token}`}},
+            )
+            .then(res => {
+              if (res.data.permissions && res.data.permissions.push) {
+                setUser(loggedUser);
+                setUserPermissions("push");
+              } else {
+                setUser(loggedUser);
+                setUserPermissions("no");
+              }
+            })
+            .catch(error => {
+              console.log(error);
+              setUser(loggedUser);
+              setUserPermissions("no");
+            });
+        }, [setUser, setUserPermissions]
     )
-    .then(res => {
-      if (res.data.permissions && res.data.permissions.push) {
-        this.setState({user: loggedUser, userPermissions: "push"});
-      } else {
-        this.setState({user: loggedUser, userPermissions: "no"});
-      }
-    })
-    .catch(error => {
-      console.log(error);
-      this.setState({user: loggedUser, userPermissions: "no"});
-    });
-  };
 
-  notify(uid, result, message) {
-    const alertsList = this.state.alerts.slice();
-    alertsList.push({uid: uid, result: result, message: message})
-    this.setState({alerts: alertsList.reverse()});
-    setTimeout(() => {
-        const alertsList = this.state.alerts.filter(item => item.uid !== uid);
-        this.setState({alerts: alertsList});
-    }, 6000);
-  }
-
-  componentDidMount() {
-    if (this.state.userPermissions === "unknown") {
-      this.fetchUserPermissions(this.state.user);
+    const notify = (uid, result, message) => {
+        const alertsList = alerts.slice();
+        alertsList.push({uid: uid, result: result, message: message})
+        setAlerts({alerts: alertsList.reverse()});
+        setTimeout(() => {
+            const alertsList = alerts.filter(item => item.uid !== uid);
+            setAlerts({alerts: alertsList});
+        }, 6000);
     }
-  };
 
-  render() {
+    useEffect(() => {
+        if (userPermissions === "unknown") {
+            fetchUserPermissions(user);
+        }
+    }, [user, userPermissions, fetchUserPermissions])
+
     return (
-      <>
       <Router>
-          <MurdockNavBar user={this.state.user} userPermissions={this.state.userPermissions} onLoginSuccess={this.onLoginSuccess} onLoginFailure={this.onLoginFailure} onLogout={this.onLogout} />
+          <MurdockNavBar user={user} userPermissions={userPermissions} onLoginSuccess={onLoginSuccess} onLoginFailure={onLoginFailure} onLogout={onLogout} />
           <div className="container">
           <div className="position-fixed bottom-0 end-0 p-3" style={{zIndex:11}}>
           {
-              this.state.alerts.map(item => (
+              alerts.map(item => (
                   <div key={item.uid} className="toast show m-1" role="alert" aria-live="assertive" aria-atomic="true">
                       <div className={`toast-body text-${item.result}`}>
                           <i className={`bi-${(item.result === "danger") ? "x" : "info"}-circle-fill me-2`}></i>{item.message}
@@ -174,26 +168,24 @@ class Murdock extends Component {
           </div>
           <Suspense fallback={<div className="container"><LoadingSpinner /></div>}>
               <Switch>
-                  <Route exact path="/" render={() => <JobList user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
-                  <Route exact path="/details/branch/:branch" render={() => <JobBranch user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
-                  <Route exact path="/details/branch/:branch/:tab" render={() => <JobBranch user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
-                  <Route exact path="/details/tag/:tag" render={() => <JobTag user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
-                  <Route exact path="/details/tag/:tag/:tab" render={() => <JobTag user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
-                  <Route exact path="/details/commit/:commit" render={() => <JobCommit user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
-                  <Route exact path="/details/commit/:commit/:tab" render={() => <JobCommit user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
-                  <Route exact path="/details/pr/:prnum" render={() => <JobPr user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
-                  <Route exact path="/details/pr/:prnum/:tab" render={() => <JobPr user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
-                  <Route exact path="/details/:uid" render={() => <JobUid user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
-                  <Route exact path="/details/:uid/:tab" render={() => <JobUid user={this.state.user} userPermissions={this.state.userPermissions} notify={this.notify} />} />
+                  <Route exact path="/details/branch/:branch" render={() => <JobBranch user={user} userPermissions={userPermissions} notify={notify} />} />
+                  <Route exact path="/details/branch/:branch/:tab" render={() => <JobBranch user={user} userPermissions={userPermissions} notify={notify} />} />
+                  <Route exact path="/details/tag/:tag" render={() => <JobTag user={user} userPermissions={userPermissions} notify={notify} />} />
+                  <Route exact path="/details/tag/:tag/:tab" render={() => <JobTag user={user} userPermissions={userPermissions} notify={notify} />} />
+                  <Route exact path="/details/commit/:commit" render={() => <JobCommit user={user} userPermissions={userPermissions} notify={notify} />} />
+                  <Route exact path="/details/commit/:commit/:tab" render={() => <JobCommit user={user} userPermissions={userPermissions} notify={notify} />} />
+                  <Route exact path="/details/pr/:prnum" render={() => <JobPr user={user} userPermissions={userPermissions} notify={notify} />} />
+                  <Route exact path="/details/pr/:prnum/:tab" render={() => <JobPr user={user} userPermissions={userPermissions} notify={notify} />} />
+                  <Route exact path="/details/:uid" render={() => <JobUid user={user} userPermissions={userPermissions} notify={notify} />} />
+                  <Route exact path="/details/:uid/:tab" render={() => <JobUid user={user} userPermissions={userPermissions} notify={notify} />} />
                   <Route exact path="/details/:uid/builds/:application" render={() => <ApplicationResults type="builds" />} />
                   <Route exact path="/details/:uid/tests/:application" render={() => <ApplicationResults type="tests" />} />
+                  <Route path="/" render={() => <JobList user={user} userPermissions={userPermissions} notify={notify} />} />
               </Switch>
           </Suspense>
           </div>
       </Router>
-      </>
-    )
-  }
+    );
 };
 
 export default Murdock;
