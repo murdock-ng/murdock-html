@@ -138,10 +138,10 @@ const Murdock = () => {
     const notify = (uid, result, message) => {
         const alertsList = alerts.slice();
         alertsList.push({uid: uid, result: result, message: message})
-        setAlerts({alerts: alertsList.reverse()});
+        setAlerts(alertsList.reverse());
         setTimeout(() => {
             const alertsList = alerts.filter(item => item.uid !== uid);
-            setAlerts({alerts: alertsList});
+            setAlerts(alertsList);
         }, 6000);
     }
 
