@@ -55,6 +55,55 @@ const JobsTable = (props) => {
     )
 }
 
+const JobSearch = (props) => {
+    return (
+        <div className="btn-toolbar justify-content-left my-1" role="toolbar">
+            <div className="btn-group m-1" role="group">
+                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkAll" onChange={props.isAllClicked} checked={props.jobType === "all"} />
+                <label className="btn btn-outline-primary" htmlFor="checkAll">All</label>
+                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkPRs" onChange={props.isPRClicked} checked={props.jobType === "pr"} />
+                <label className="btn btn-outline-primary" htmlFor="checkPRs">PRs</label>
+                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkBranches" onChange={props.isBranchClicked} checked={props.jobType === "branch"} />
+                <label className="btn btn-outline-primary" htmlFor="checkBranches">Branches</label>
+                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkTags" onChange={props.isTagClicked} checked={props.jobType === "tag"} />
+                <label className="btn btn-outline-primary" htmlFor="checkTags">Tags</label>
+            </div>
+            <div className="btn-group m-1" role="group">
+                <input type="checkbox" className="btn-check" id="checkQueued" onChange={props.showQueuedClicked} checked={props.jobStates.includes("queued")} />
+                <label className={`btn btn-outline-${cardColor["queued"]}`} htmlFor="checkQueued" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.jobStates.includes("queued") ? "Hide" : "Show"} queued jobs`}><i className="bi-inbox"></i></label>
+                <input type="checkbox" className="btn-check" id="checkRunning" onChange={props.showRunningClicked} checked={props.jobStates.includes("running")} />
+                <label className={`btn btn-outline-${cardColor["running"]}`} htmlFor="checkRunning" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.jobStates.includes("running") ? "Hide" : "Show"} running jobs`}><i className="bi-gear-fill"></i></label>
+                <input type="checkbox" className="btn-check" id="checkPassed" onChange={props.showPassedClicked} checked={props.jobStates.includes("passed")} />
+                <label className={`btn btn-outline-${cardColor["passed"]}`} htmlFor="checkPassed" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.jobStates.includes("passed") ? "Hide" : "Show"} passed jobs`}><i className="bi-check-circle-fill"></i></label>
+                <input type="checkbox" className="btn-check" id="checkErrored" onChange={props.showErroredClicked} checked={props.jobStates.includes("errored")} />
+                <label className={`btn btn-outline-${cardColor["errored"]}`} htmlFor="checkErrored" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.jobStates.includes("errored") ? "Hide" : "Show"} errored jobs`}><i className="bi-x-circle-fill"></i></label>
+                <input type="checkbox" className="btn-check" id="checkStopped" onChange={props.showStoppedClicked} checked={props.jobStates.includes("stopped")} />
+                <label className={`btn btn-outline-${cardColor["stopped"]}`} htmlFor="checkStopped" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.jobStates.includes("stopped") ? "Hide" : "Show"} stopped jobs`}><i className="bi-dash-circle-fill"></i></label>
+            </div>
+            <div className="input-group m-1 ">
+                <div className="input-group-text d-none d-sm-block" id="inputSearchCommit"><i className="bi-tag"></i></div>
+                <input type="text" className="form-control d-none d-sm-block" placeholder="Commit SHA" aria-label="Commit SHA" aria-describedby="inputSearchCommit" value={props.commitSha} onChange={props.commitShaChanged} onKeyUp={props.keyUp} />
+            </div>
+            <div className="input-group m-1">
+                <div className="input-group-text d-none d-sm-block" id="inputSearchAuthor"><i className="bi-person"></i></div>
+                <input type="text" className="form-control d-none d-sm-block" placeholder="Commit author" aria-label="Commit author" aria-describedby="inputSearchAuthor" value={props.commitAuthor} onChange={props.commitAuthorChanged} onKeyUp={props.keyUp} />
+            </div>
+            {(props.jobType === "pr") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
+                <div className="input-group-text d-none d-sm-block" id="inputSearchPR">PR #</div>
+                <input type="text" className="form-control d-none d-sm-block" placeholder="PR number" aria-label="PR number" aria-describedby="inputSearchPR" value={props.prNumber} onChange={props.prNumberChanged} onKeyUp={props.keyUp} />
+            </div>}
+            {(props.jobType === "branch") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
+                <div className="input-group-text d-none d-sm-block" id="inputSearchBranch">Branch</div>
+                <input type="text" className="form-control d-none d-sm-block" placeholder="Branch name" aria-label="Branch name" aria-describedby="inputSearchBranch" value={props.branch} onChange={props.branchChanged} onKeyUp={props.keyUp} />
+            </div>}
+            {(props.jobType === "tag") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
+                <div className="input-group-text d-none d-sm-block" id="inputSearchTag">Tag</div>
+                <input type="text" className="form-control d-none d-sm-block" placeholder="Tag name" aria-label="Tag name" aria-describedby="inputSearchTag" value={props.tag} onChange={props.tagChanged} onKeyUp={props.keyUp} />
+            </div>}
+        </div>
+    )
+}
+
 const JobList = (props) => {
     const [ jobsFetched, setJobsFetched ] = useState(false);
     const [ jobs, setJobs ] = useState([]);
@@ -253,50 +302,30 @@ const JobList = (props) => {
 
     return (
         <>
-            <div className="btn-toolbar justify-content-left my-1" role="toolbar">
-                <div className="btn-group m-1" role="group">
-                    <input type="radio" name="jobTypeRadio" className="btn-check" id="checkAll" onClick={isAllClicked} defaultChecked={jobType === "all"} />
-                    <label className="btn btn-outline-primary" htmlFor="checkAll">All</label>
-                    <input type="radio" name="jobTypeRadio" className="btn-check" id="checkPRs" onClick={isPRClicked} defaultChecked={jobType === "pr"} />
-                    <label className="btn btn-outline-primary" htmlFor="checkPRs">PRs</label>
-                    <input type="radio" name="jobTypeRadio" className="btn-check" id="checkBranches" onClick={isBranchClicked} defaultChecked={jobType === "branch"} />
-                    <label className="btn btn-outline-primary" htmlFor="checkBranches">Branches</label>
-                    <input type="radio" name="jobTypeRadio" className="btn-check" id="checkTags" onClick={isTagClicked} defaultChecked={jobType === "tag"} />
-                    <label className="btn btn-outline-primary" htmlFor="checkTags">Tags</label>
-                </div>
-                <div className="btn-group m-1" role="group">
-                    <input type="checkbox" className="btn-check" id="checkQueued" onClick={showQueuedClicked} defaultChecked={jobStates.includes("queued")} />
-                    <label className={`btn btn-outline-${cardColor["queued"]}`} htmlFor="checkQueued" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${jobStates.includes("queued") ? "Hide" : "Show"} queued jobs`}><i className="bi-inbox"></i></label>
-                    <input type="checkbox" className="btn-check" id="checkRunning" onClick={showRunningClicked} defaultChecked={jobStates.includes("running")} />
-                    <label className={`btn btn-outline-${cardColor["running"]}`} htmlFor="checkRunning" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${jobStates.includes("running") ? "Hide" : "Show"} running jobs`}><i className="bi-gear-fill"></i></label>
-                    <input type="checkbox" className="btn-check" id="checkPassed" onClick={showPassedClicked} defaultChecked={jobStates.includes("passed")} />
-                    <label className={`btn btn-outline-${cardColor["passed"]}`} htmlFor="checkPassed" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${jobStates.includes("passed") ? "Hide" : "Show"} passed jobs`}><i className="bi-check-circle-fill"></i></label>
-                    <input type="checkbox" className="btn-check" id="checkErrored" onClick={showErroredClicked} defaultChecked={jobStates.includes("errored")} />
-                    <label className={`btn btn-outline-${cardColor["errored"]}`} htmlFor="checkErrored" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${jobStates.includes("errored") ? "Hide" : "Show"} errored jobs`}><i className="bi-x-circle-fill"></i></label>
-                    <input type="checkbox" className="btn-check" id="checkStopped" onClick={showStoppedClicked} defaultChecked={jobStates.includes("stopped")} />
-                    <label className={`btn btn-outline-${cardColor["stopped"]}`} htmlFor="checkStopped" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${jobStates.includes("stopped") ? "Hide" : "Show"} stopped jobs`}><i className="bi-dash-circle-fill"></i></label>
-                </div>
-                <div className="input-group m-1 ">
-                    <div className="input-group-text d-none d-sm-block" id="inputSearchCommit"><i className="bi-tag"></i></div>
-                    <input type="text" className="form-control d-none d-sm-block" placeholder="Commit SHA" aria-label="Commit SHA" aria-describedby="inputSearchCommit" value={commitSha} onChange={commitShaChanged} onKeyUp={keyUp} />
-                </div>
-                <div className="input-group m-1">
-                    <div className="input-group-text d-none d-sm-block" id="inputSearchAuthor"><i className="bi-person"></i></div>
-                    <input type="text" className="form-control d-none d-sm-block" placeholder="Commit author" aria-label="Commit author" aria-describedby="inputSearchAuthor" value={commitAuthor} onChange={commitAuthorChanged} onKeyUp={keyUp} />
-                </div>
-                {(jobType === "pr") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
-                    <div className="input-group-text d-none d-sm-block" id="inputSearchPR">PR #</div>
-                    <input type="text" className="form-control d-none d-sm-block" placeholder="PR number" aria-label="PR number" aria-describedby="inputSearchPR" value={prNumber} onChange={prNumberChanged} onKeyUp={keyUp} />
-                </div>}
-                {(jobType === "branch") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
-                    <div className="input-group-text d-none d-sm-block" id="inputSearchBranch">Branch</div>
-                    <input type="text" className="form-control d-none d-sm-block" placeholder="Branch name" aria-label="Branch name" aria-describedby="inputSearchBranch" value={branch} onChange={branchChanged} onKeyUp={keyUp} />
-                </div>}
-                {(jobType === "tag") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
-                    <div className="input-group-text d-none d-sm-block" id="inputSearchTag">Tag</div>
-                    <input type="text" className="form-control d-none d-sm-block" placeholder="Tag name" aria-label="Tag name" aria-describedby="inputSearchTag" value={tag} onChange={tagChanged} onKeyUp={keyUp} />
-                </div>}
-            </div>
+            <JobSearch
+                jobType={jobType}
+                jobStates={jobStates}
+                commitSha={commitSha}
+                commitAuthor={commitAuthor}
+                prNumber={prNumber}
+                branch={branch}
+                tag={tag}
+                isAllClicked={isAllClicked}
+                isPRClicked={isPRClicked}
+                isBranchClicked={isBranchClicked}
+                isTagClicked={isTagClicked}
+                showQueuedClicked={showQueuedClicked}
+                showRunningClicked={showRunningClicked}
+                showPassedClicked={showPassedClicked}
+                showErroredClicked={showErroredClicked}
+                showStoppedClicked={showStoppedClicked}
+                commitShaChanged={commitShaChanged}
+                commitAuthorChanged={commitAuthorChanged}
+                prNumberChanged={prNumberChanged}
+                branchChanged={branchChanged}
+                tagChanged={tagChanged}
+                keyUp={keyUp}
+            />
             {
                 (!jobsFetched) ? (
                     <LoadingSpinner />
