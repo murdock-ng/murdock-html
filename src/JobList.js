@@ -183,7 +183,7 @@ const JobList = (props) => {
                 else if (
                     (param === "branch" && params.type === "branch") ||
                     (param === "tag" && params.type === "tag") ||
-                    (param == "author") || (param == "sha")) {
+                    (param === "author") || (param === "sha")) {
                     paramQuery = `${param}=${value}`
                 }
 
