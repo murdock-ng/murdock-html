@@ -176,7 +176,7 @@ export const JobItem = (props) => {
                 }
             </td>
             <td style={{ width: "800px" }}>
-                <span className="align-middle" data-bs-toggle="tooltip" data-bs-placement="bottom" title={jobItemTitleTooltip}>
+                <span className="align-middle text-break" data-bs-toggle="tooltip" data-bs-placement="bottom" title={jobItemTitleTooltip}>
                     <i className={`bi-github ${githubIconColor} me-1`}></i>
                     <a className="link-underline-hover text-dark me-1" href={titleUrl} target="_blank" rel="noreferrer noopener">
                         {props.job.prinfo ? `PR #${props.job.prinfo.number}: ${title}`: `${title}`}
