@@ -110,6 +110,7 @@ const defaultQueryParams = {
     type: "all",
     states: ["queued", "running", "passed", "errored", "stopped"],
     prnum: "",
+    prstates: ["open", "closed"],
     branch: "",
     tag: "",
     sha: "",
@@ -129,7 +130,7 @@ const JobList = (props) => {
         (params) => {
             let apiQuery = `limit=${params.limit}&states=${params.states.join("+")}`;
             if (params.type === "pr") {
-                apiQuery = `${apiQuery}&is_pr=true`
+                apiQuery = `${apiQuery}&is_pr=true&prstates=${params.prstates.join("+")}`
             }
             if (params.type === "branch") {
                 apiQuery = `${apiQuery}&is_branch=true`
@@ -180,6 +181,11 @@ const JobList = (props) => {
                         paramQuery = `${param}=${value.join("+")}`
                     }
                 }
+                else if (param === "prstates" && params.type === "pr") {
+                    if (value.length < 2) {
+                        paramQuery = `${param}=${value.join("+")}`
+                    }
+                }
                 else if (
                     (param === "branch" && params.type === "branch") ||
                     (param === "tag" && params.type === "tag") ||
@@ -218,6 +224,9 @@ const JobList = (props) => {
                 }
                 if (param === "states") {
                     params.states = value.split(" ");
+                }
+                if (param === "prstates") {
+                    params.prstates = value.split(" ");
                 }
                 if (param === "prnum") {
                     params.prnum = value;
