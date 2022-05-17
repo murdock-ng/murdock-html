@@ -59,7 +59,7 @@ const JobsTable = (props) => {
 const JobSearch = (props) => {
     return (
         <div className="btn-toolbar justify-content-left my-1" role="toolbar">
-            <div className="btn-group m-1" role="group">
+            <div className="btn-group btn-group-sm m-1" role="group">
                 <input type="radio" name="jobTypeRadio" className="btn-check" id="checkAll" onChange={() => props.updateJobType("all")} checked={props.queryParams.type === "all"} />
                 <label className="btn btn-outline-primary" htmlFor="checkAll">All</label>
                 <input type="radio" name="jobTypeRadio" className="btn-check" id="checkPRs" onChange={() => props.updateJobType("pr")} checked={props.queryParams.type === "pr"} />
@@ -69,7 +69,7 @@ const JobSearch = (props) => {
                 <input type="radio" name="jobTypeRadio" className="btn-check" id="checkTags" onChange={() => props.updateJobType("tag")} checked={props.queryParams.type === "tag"} />
                 <label className="btn btn-outline-primary" htmlFor="checkTags">Tags</label>
             </div>
-            <div className="btn-group m-1" role="group">
+            <div className="btn-group btn-group-sm m-1" role="group">
                 <input type="checkbox" className="btn-check" id="checkQueued" onChange={() => props.updateJobStates("queued")} checked={props.queryParams.states.includes("queued")} />
                 <label className={`btn btn-outline-${cardColor["queued"]}`} htmlFor="checkQueued" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.states.includes("queued") ? "Hide" : "Show"} queued jobs`}><i className="bi-inbox"></i></label>
                 <input type="checkbox" className="btn-check" id="checkRunning" onChange={() => props.updateJobStates("running")} checked={props.queryParams.states.includes("running")} />
@@ -81,23 +81,23 @@ const JobSearch = (props) => {
                 <input type="checkbox" className="btn-check" id="checkStopped" onChange={() => props.updateJobStates("stopped")} checked={props.queryParams.states.includes("stopped")} />
                 <label className={`btn btn-outline-${cardColor["stopped"]}`} htmlFor="checkStopped" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.states.includes("stopped") ? "Hide" : "Show"} stopped jobs`}><i className="bi-dash-circle-fill"></i></label>
             </div>
-            <div className="input-group m-1 ">
+            <div className="input-group input-group-sm m-1 ">
                 <div className="input-group-text d-none d-sm-block" id="inputSearchCommit"><i className="bi-tag"></i></div>
                 <input type="text" className="form-control d-none d-sm-block" placeholder="Commit SHA" aria-label="Commit SHA" aria-describedby="inputSearchCommit" value={props.queryParams.sha} onChange={props.commitShaChanged} onKeyUp={props.keyUp} />
             </div>
-            <div className="input-group m-1">
+            <div className="input-group input-group-sm m-1">
                 <div className="input-group-text d-none d-sm-block" id="inputSearchAuthor"><i className="bi-person"></i></div>
                 <input type="text" className="form-control d-none d-sm-block" placeholder="Commit author" aria-label="Commit author" aria-describedby="inputSearchAuthor" value={props.queryParams.author} onChange={props.commitAuthorChanged} onKeyUp={props.keyUp} />
             </div>
-            {(props.queryParams.type === "pr") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
+            {(props.queryParams.type === "pr") && <div className="input-group input-group-sm m-1" style={{maxWidth: "250px"}}>
                 <div className="input-group-text d-none d-sm-block" id="inputSearchPR">PR #</div>
                 <input type="text" className="form-control d-none d-sm-block" placeholder="PR number" aria-label="PR number" aria-describedby="inputSearchPR" value={props.queryParams.prnum} onChange={props.prNumberChanged} onKeyUp={props.keyUp} />
             </div>}
-            {(props.queryParams.type === "branch") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
+            {(props.queryParams.type === "branch") && <div className="input-group input-group-sm m-1" style={{maxWidth: "250px"}}>
                 <div className="input-group-text d-none d-sm-block" id="inputSearchBranch">Branch</div>
                 <input type="text" className="form-control d-none d-sm-block" placeholder="Branch name" aria-label="Branch name" aria-describedby="inputSearchBranch" value={props.queryParams.branch} onChange={props.branchChanged} onKeyUp={props.keyUp} />
             </div>}
-            {(props.queryParams.type === "tag") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
+            {(props.queryParams.type === "tag") && <div className="input-group input-group-sm m-1" style={{maxWidth: "250px"}}>
                 <div className="input-group-text d-none d-sm-block" id="inputSearchTag">Tag</div>
                 <input type="text" className="form-control d-none d-sm-block" placeholder="Tag name" aria-label="Tag name" aria-describedby="inputSearchTag" value={props.queryParams.tag} onChange={props.tagChanged} onKeyUp={props.keyUp} />
             </div>}
