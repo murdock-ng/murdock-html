@@ -22,6 +22,7 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import Websocket from 'react-websocket';
 import axios from 'axios';
 
@@ -59,91 +60,187 @@ const JobSearch = (props) => {
     return (
         <div className="btn-toolbar justify-content-left my-1" role="toolbar">
             <div className="btn-group m-1" role="group">
-                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkAll" onChange={props.isAllClicked} checked={props.jobType === "all"} />
+                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkAll" onChange={() => props.updateJobType("all")} checked={props.queryParams.type === "all"} />
                 <label className="btn btn-outline-primary" htmlFor="checkAll">All</label>
-                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkPRs" onChange={props.isPRClicked} checked={props.jobType === "pr"} />
+                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkPRs" onChange={() => props.updateJobType("pr")} checked={props.queryParams.type === "pr"} />
                 <label className="btn btn-outline-primary" htmlFor="checkPRs">PRs</label>
-                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkBranches" onChange={props.isBranchClicked} checked={props.jobType === "branch"} />
+                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkBranches" onChange={() => props.updateJobType("branch")} checked={props.queryParams.type === "branch"} />
                 <label className="btn btn-outline-primary" htmlFor="checkBranches">Branches</label>
-                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkTags" onChange={props.isTagClicked} checked={props.jobType === "tag"} />
+                <input type="radio" name="jobTypeRadio" className="btn-check" id="checkTags" onChange={() => props.updateJobType("tag")} checked={props.queryParams.type === "tag"} />
                 <label className="btn btn-outline-primary" htmlFor="checkTags">Tags</label>
             </div>
             <div className="btn-group m-1" role="group">
-                <input type="checkbox" className="btn-check" id="checkQueued" onChange={props.showQueuedClicked} checked={props.jobStates.includes("queued")} />
-                <label className={`btn btn-outline-${cardColor["queued"]}`} htmlFor="checkQueued" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.jobStates.includes("queued") ? "Hide" : "Show"} queued jobs`}><i className="bi-inbox"></i></label>
-                <input type="checkbox" className="btn-check" id="checkRunning" onChange={props.showRunningClicked} checked={props.jobStates.includes("running")} />
-                <label className={`btn btn-outline-${cardColor["running"]}`} htmlFor="checkRunning" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.jobStates.includes("running") ? "Hide" : "Show"} running jobs`}><i className="bi-gear-fill"></i></label>
-                <input type="checkbox" className="btn-check" id="checkPassed" onChange={props.showPassedClicked} checked={props.jobStates.includes("passed")} />
-                <label className={`btn btn-outline-${cardColor["passed"]}`} htmlFor="checkPassed" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.jobStates.includes("passed") ? "Hide" : "Show"} passed jobs`}><i className="bi-check-circle-fill"></i></label>
-                <input type="checkbox" className="btn-check" id="checkErrored" onChange={props.showErroredClicked} checked={props.jobStates.includes("errored")} />
-                <label className={`btn btn-outline-${cardColor["errored"]}`} htmlFor="checkErrored" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.jobStates.includes("errored") ? "Hide" : "Show"} errored jobs`}><i className="bi-x-circle-fill"></i></label>
-                <input type="checkbox" className="btn-check" id="checkStopped" onChange={props.showStoppedClicked} checked={props.jobStates.includes("stopped")} />
-                <label className={`btn btn-outline-${cardColor["stopped"]}`} htmlFor="checkStopped" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.jobStates.includes("stopped") ? "Hide" : "Show"} stopped jobs`}><i className="bi-dash-circle-fill"></i></label>
+                <input type="checkbox" className="btn-check" id="checkQueued" onChange={() => props.updateJobStates("queued")} checked={props.queryParams.states.includes("queued")} />
+                <label className={`btn btn-outline-${cardColor["queued"]}`} htmlFor="checkQueued" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.states.includes("queued") ? "Hide" : "Show"} queued jobs`}><i className="bi-inbox"></i></label>
+                <input type="checkbox" className="btn-check" id="checkRunning" onChange={() => props.updateJobStates("running")} checked={props.queryParams.states.includes("running")} />
+                <label className={`btn btn-outline-${cardColor["running"]}`} htmlFor="checkRunning" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.states.includes("running") ? "Hide" : "Show"} running jobs`}><i className="bi-gear-fill"></i></label>
+                <input type="checkbox" className="btn-check" id="checkPassed" onChange={() => props.updateJobStates("passed")} checked={props.queryParams.states.includes("passed")} />
+                <label className={`btn btn-outline-${cardColor["passed"]}`} htmlFor="checkPassed" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.states.includes("passed") ? "Hide" : "Show"} passed jobs`}><i className="bi-check-circle-fill"></i></label>
+                <input type="checkbox" className="btn-check" id="checkErrored" onChange={() => props.updateJobStates("errored")} checked={props.queryParams.states.includes("errored")} />
+                <label className={`btn btn-outline-${cardColor["errored"]}`} htmlFor="checkErrored" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.states.includes("errored") ? "Hide" : "Show"} errored jobs`}><i className="bi-x-circle-fill"></i></label>
+                <input type="checkbox" className="btn-check" id="checkStopped" onChange={() => props.updateJobStates("stopped")} checked={props.queryParams.states.includes("stopped")} />
+                <label className={`btn btn-outline-${cardColor["stopped"]}`} htmlFor="checkStopped" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.states.includes("stopped") ? "Hide" : "Show"} stopped jobs`}><i className="bi-dash-circle-fill"></i></label>
             </div>
             <div className="input-group m-1 ">
                 <div className="input-group-text d-none d-sm-block" id="inputSearchCommit"><i className="bi-tag"></i></div>
-                <input type="text" className="form-control d-none d-sm-block" placeholder="Commit SHA" aria-label="Commit SHA" aria-describedby="inputSearchCommit" value={props.commitSha} onChange={props.commitShaChanged} onKeyUp={props.keyUp} />
+                <input type="text" className="form-control d-none d-sm-block" placeholder="Commit SHA" aria-label="Commit SHA" aria-describedby="inputSearchCommit" value={props.queryParams.sha} onChange={props.commitShaChanged} onKeyUp={props.keyUp} />
             </div>
             <div className="input-group m-1">
                 <div className="input-group-text d-none d-sm-block" id="inputSearchAuthor"><i className="bi-person"></i></div>
-                <input type="text" className="form-control d-none d-sm-block" placeholder="Commit author" aria-label="Commit author" aria-describedby="inputSearchAuthor" value={props.commitAuthor} onChange={props.commitAuthorChanged} onKeyUp={props.keyUp} />
+                <input type="text" className="form-control d-none d-sm-block" placeholder="Commit author" aria-label="Commit author" aria-describedby="inputSearchAuthor" value={props.queryParams.author} onChange={props.commitAuthorChanged} onKeyUp={props.keyUp} />
             </div>
-            {(props.jobType === "pr") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
+            {(props.queryParams.type === "pr") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
                 <div className="input-group-text d-none d-sm-block" id="inputSearchPR">PR #</div>
-                <input type="text" className="form-control d-none d-sm-block" placeholder="PR number" aria-label="PR number" aria-describedby="inputSearchPR" value={props.prNumber} onChange={props.prNumberChanged} onKeyUp={props.keyUp} />
+                <input type="text" className="form-control d-none d-sm-block" placeholder="PR number" aria-label="PR number" aria-describedby="inputSearchPR" value={props.queryParams.prnum} onChange={props.prNumberChanged} onKeyUp={props.keyUp} />
             </div>}
-            {(props.jobType === "branch") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
+            {(props.queryParams.type === "branch") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
                 <div className="input-group-text d-none d-sm-block" id="inputSearchBranch">Branch</div>
-                <input type="text" className="form-control d-none d-sm-block" placeholder="Branch name" aria-label="Branch name" aria-describedby="inputSearchBranch" value={props.branch} onChange={props.branchChanged} onKeyUp={props.keyUp} />
+                <input type="text" className="form-control d-none d-sm-block" placeholder="Branch name" aria-label="Branch name" aria-describedby="inputSearchBranch" value={props.queryParams.branch} onChange={props.branchChanged} onKeyUp={props.keyUp} />
             </div>}
-            {(props.jobType === "tag") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
+            {(props.queryParams.type === "tag") && <div className="input-group m-1" style={{maxWidth: "250px"}}>
                 <div className="input-group-text d-none d-sm-block" id="inputSearchTag">Tag</div>
-                <input type="text" className="form-control d-none d-sm-block" placeholder="Tag name" aria-label="Tag name" aria-describedby="inputSearchTag" value={props.tag} onChange={props.tagChanged} onKeyUp={props.keyUp} />
+                <input type="text" className="form-control d-none d-sm-block" placeholder="Tag name" aria-label="Tag name" aria-describedby="inputSearchTag" value={props.queryParams.tag} onChange={props.tagChanged} onKeyUp={props.keyUp} />
             </div>}
         </div>
     )
 }
 
+const defaultQueryParams = {
+    limit: itemsDisplayedStep,
+    type: "all",
+    states: ["queued", "running", "passed", "errored", "stopped"],
+    prnum: "",
+    branch: "",
+    tag: "",
+    sha: "",
+    author: "",
+};
+
 const JobList = (props) => {
+    const location = useLocation();
+    const history = useHistory();
+
     const [ jobsFetched, setJobsFetched ] = useState(false);
     const [ jobs, setJobs ] = useState([]);
-    const [ jobsDisplayedLimit, setJobsDisplayedLimit ] = useState(itemsDisplayedStep);
-    const [ jobType, setJobType ] = useState("all");
-    const [ jobStates, setJobStates ] = useState(["queued", "running", "passed", "errored", "stopped"]);
-    const [ prNumber, setPrNumber ] = useState("");
-    const [ branch, setBranch ] = useState("");
-    const [ tag, setTag ] = useState("");
-    const [ commitSha, setCommitSha ] = useState("");
-    const [ commitAuthor, setCommitAuthor ] = useState("");
+    const [ queryParams, setQueryParams ] = useState(Object.assign({}, defaultQueryParams));
+    const [ queryUrl, setQueryUrl ] = useState("");
+
+    const queryParamsToApiQuery = useCallback(
+        (params) => {
+            let apiQuery = `limit=${params.limit}&states=${params.states.join("+")}`;
+            if (params.type === "pr") {
+                apiQuery = `${apiQuery}&is_pr=true`
+            }
+            if (params.type === "branch") {
+                apiQuery = `${apiQuery}&is_branch=true`
+            }
+            if (params.type === "tag") {
+                apiQuery = `${apiQuery}&is_tag=true`
+            }
+            if (params.type === "pr" && params.prnum) {
+                apiQuery = `${apiQuery}&prnum=${params.prnum}`
+            }
+            if (params.type === "branch" && params.branch) {
+                apiQuery = `${apiQuery}&branch=${params.branch}`
+            }
+            if (params.type === "tag" && params.tag) {
+                apiQuery = `${apiQuery}&tag=${params.tag}`
+            }
+            if (params.sha) {
+                apiQuery = `${apiQuery}&sha=${params.sha}`
+            }
+            if (params.author) {
+                apiQuery = `${apiQuery}&author=${params.author}`
+            }
+
+            return apiQuery;
+        }, []
+    )
+
+    const queryParamsToUrl = useCallback(
+        (params) => {
+            let url = "";
+            for (const [param, value] of Object.entries(params)) {
+                if (value === "") {
+                    continue;
+                }
+                let paramQuery = ""
+                if (param === "limit") {
+                    if (value !== itemsDisplayedStep) {
+                        paramQuery = `${param}=${value}`
+                    }
+                }
+                else if (param === "type") {
+                    if (["pr", "branch", "tag"].includes(value)) {
+                        paramQuery = `${param}=${value}`
+                    }
+                }
+                else if (param === "states") {
+                    if (value.length < 5) {
+                        paramQuery = `${param}=${value.join("+")}`
+                    }
+                }
+                else if (param === "branch" && params.type === "branch")  {
+                    paramQuery = `${param}=${value}`
+                }
+                else if (param === "tag" && params.type === "tag")  {
+                    paramQuery = `${param}=${value}`
+                }
+
+                if (paramQuery === "") {
+                    continue;
+                }
+
+                if (url === "") {
+                    url = `${paramQuery}`
+                }
+                else {
+                    url = `${url}&${paramQuery}`
+                }
+            }
+            if (url !== "") {
+                url = `?${url}`
+            }
+            return url
+        }, []
+    )
+
+    const queryStringtoQueryParams = useCallback(
+        (queryString) => {
+            let params = Object.assign({}, defaultQueryParams);
+            for (const [param, value] of new URLSearchParams(queryString)) {
+                if (param === "limit") {
+                    params.limit = value;
+                }
+                if (param === "type" && ["pr", "branch", "tag"].includes(value)) {
+                    params.type = value;
+                }
+                if (param === "states") {
+                    params.states = value.split(" ");
+                }
+                if (param === "prnum") {
+                    params.prnum = value;
+                }
+                if (param === "branch") {
+                    params.branch = value;
+                }
+                if (param === "tag") {
+                    params.tag = value;
+                }
+                if (param === "sha") {
+                    params.sha = value;
+                }
+                if (param === "author") {
+                    params.author = value;
+                }
+            }
+            return params
+        }, []
+    )
 
     const fetchJobs = useCallback(
         () => {
-            let queryString = `limit=${jobsDisplayedLimit}&states=${jobStates.join("+")}`;
-            if (jobType === "pr") {
-                queryString = `${queryString}&is_pr=true`
-            }
-            if (jobType === "branch") {
-                queryString = `${queryString}&is_branch=true`
-            }
-            if (jobType === "tag") {
-                queryString = `${queryString}&is_tag=true`
-            }
-            if (jobType === "pr" && prNumber) {
-                queryString = `${queryString}&prnum=${prNumber}`
-            }
-            if (jobType === "branch" && branch) {
-                queryString = `${queryString}&branch=${branch}`
-            }
-            if (jobType === "tag" && tag) {
-                queryString = `${queryString}&tag=${tag}`
-            }
-            if (commitSha) {
-                queryString = `${queryString}&sha=${commitSha}`
-            }
-            if (commitAuthor) {
-                queryString = `${queryString}&author=${commitAuthor}`
-            }
-            axios.get(`${murdockHttpBaseUrl}/jobs?${queryString}`)
+            axios.get(`${murdockHttpBaseUrl}/jobs?${queryParamsToApiQuery(queryParams)}`)
                 .then(res => {
                     setJobsFetched(true);
                     setJobs(res.data);
@@ -154,8 +251,7 @@ const JobList = (props) => {
                     setJobs([]);
                 });
         }, [
-            jobsDisplayedLimit, jobType, jobStates, prNumber, branch, tag,
-            commitSha, commitAuthor, setJobs, setJobsFetched
+            queryParams, queryParamsToApiQuery, setJobs, setJobsFetched
         ]
     )
 
@@ -197,128 +293,95 @@ const JobList = (props) => {
     }
 
     const displayMore = () => {
-        setJobsDisplayedLimit(jobs.length + itemsDisplayedStep);
-        fetchJobs();
+        let params = Object.assign({}, queryParams);
+        params.limit = parseInt(params.limit) + itemsDisplayedStep
+        history.push(`/${queryParamsToUrl(params)}`)
     }
 
-    const search = () => {
-        setJobsFetched(false);
-    }
-
-    const isAllClicked = () => {
-        setJobType("all");
-        search();
-    }
-
-    const isPRClicked = () => {
-        setJobType("pr");
-        search();
-    }
-
-    const isBranchClicked = () => {
-        setJobType("branch");
-        search();
-    }
-
-    const isTagClicked = () => {
-        setJobType("tag");
-        search();
+    const updateJobType = (type) => {
+        let params = Object.assign({}, queryParams);
+        params.type = type
+        history.push(`/${queryParamsToUrl(params)}`)
     }
 
     const updateJobStates = (state) => {
-        let states = jobStates.slice();
-        if (jobStates.includes(state)) {
-            setJobStates(states.filter(elem => elem !== state));
+        let params = Object.assign({}, queryParams);
+        if (params.states.includes(state)) {
+            params.states = params.states.filter(elem => elem !== state)
         } else {
-            states.push(state);
-            setJobStates(states);
+            params.states.push(state);
         }
-    }
-
-    const showQueuedClicked = () => {
-        updateJobStates("queued");
-        search();
-    }
-
-    const showRunningClicked = () => {
-        updateJobStates("running");
-        search();
-    }
-
-    const showPassedClicked = () => {
-        updateJobStates("passed");
-        search();
-    }
-
-    const showErroredClicked = () => {
-        updateJobStates("errored");
-        search();
-    }
-
-    const showStoppedClicked = () => {
-        updateJobStates("stopped");
-        search();
+        history.push(`/${queryParamsToUrl(params)}`)
     }
 
     const prNumberChanged = (event) => {
-        setPrNumber(event.target.value);
+        let params = Object.assign({}, queryParams);
+        params.prnum = event.target.value;
+        setQueryParams(params);
     }
 
     const branchChanged = (event) => {
-        setBranch(event.target.value)
+        let params = Object.assign({}, queryParams);
+        params.branch = event.target.value;
+        setQueryParams(params);
     }
 
     const tagChanged = (event) => {
-        setTag(event.target.value);
+        let params = Object.assign({}, queryParams);
+        params.tag = event.target.value;
+        setQueryParams(params);
     }
 
     const commitShaChanged = (event) => {
-        setCommitSha(event.target.value)
+        let params = Object.assign({}, queryParams);
+        params.sha = event.target.value;
+        setQueryParams(params);
     }
 
     const commitAuthorChanged = (event) => {
-        setCommitAuthor(event.target.value);
+        let params = Object.assign({}, queryParams);
+        params.author = event.target.value;
+        setQueryParams(params);
     }
 
     const keyUp = (event) => {
         if (event.key === 'Enter') {
-            search();
+            history.push(`/${queryParamsToUrl(queryParams)}`)
         }
     }
 
     useEffect(
         () => {
             document.title = "Murdock - Dashboard";
-            if (!jobsFetched) {
-                fetchJobs();
-            }
-
             const favicon = document.getElementById("favicon");
             if (favicon) {
                 favicon.href = "/favicon.ico";
             }
-        }, [jobsFetched, fetchJobs]
+
+            if (queryUrl !== location.search) {
+                setQueryUrl(location.search);
+                setQueryParams(queryStringtoQueryParams(location.search));
+                setJobsFetched(false);
+                return;
+            }
+
+            if (!jobsFetched) {
+                fetchJobs();
+            }
+
+        }, [
+            jobsFetched, fetchJobs,
+            setQueryParams, queryStringtoQueryParams,
+            queryUrl, location.search
+        ]
     )
 
     return (
         <>
             <JobSearch
-                jobType={jobType}
-                jobStates={jobStates}
-                commitSha={commitSha}
-                commitAuthor={commitAuthor}
-                prNumber={prNumber}
-                branch={branch}
-                tag={tag}
-                isAllClicked={isAllClicked}
-                isPRClicked={isPRClicked}
-                isBranchClicked={isBranchClicked}
-                isTagClicked={isTagClicked}
-                showQueuedClicked={showQueuedClicked}
-                showRunningClicked={showRunningClicked}
-                showPassedClicked={showPassedClicked}
-                showErroredClicked={showErroredClicked}
-                showStoppedClicked={showStoppedClicked}
+                queryParams={queryParams}
+                updateJobType={updateJobType}
+                updateJobStates={updateJobStates}
                 commitShaChanged={commitShaChanged}
                 commitAuthorChanged={commitAuthorChanged}
                 prNumberChanged={prNumberChanged}
@@ -346,7 +409,7 @@ const JobList = (props) => {
                     </div>
                 )
             }
-            {(jobsFetched && jobs.length >= jobsDisplayedLimit) ? <ShowMore onclick={displayMore} /> : null}
+            {(jobsFetched && jobs.length >= queryParams.limit) ? <ShowMore onclick={displayMore} /> : null}
             <Websocket
                 url={murdockWsUrl}
                 onOpen={handleWsOpen}
