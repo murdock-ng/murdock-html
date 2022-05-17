@@ -180,10 +180,10 @@ const JobList = (props) => {
                         paramQuery = `${param}=${value.join("+")}`
                     }
                 }
-                else if (param === "branch" && params.type === "branch")  {
-                    paramQuery = `${param}=${value}`
-                }
-                else if (param === "tag" && params.type === "tag")  {
+                else if (
+                    (param === "branch" && params.type === "branch") ||
+                    (param === "tag" && params.type === "tag") ||
+                    (param == "author") || (param == "sha")) {
                     paramQuery = `${param}=${value}`
                 }
 
