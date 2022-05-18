@@ -46,7 +46,7 @@ const JobsTable = (props) => {
                 <th scope="col" className="text-left">Title</th>
                 <th scope="col" className="text-left">Date</th>
                 {(!props.small) && <th scope="col" className="text-center px-0">Duration</th>}
-                <th scope="col" className="text-center">State</th>
+                <th scope="col" className="text-left">State</th>
             </tr>
             </thead>
             <tbody>
