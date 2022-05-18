@@ -130,6 +130,7 @@ const JobList = (props) => {
     const history = useHistory();
 
     const [ jobsFetched, setJobsFetched ] = useState(false);
+    const [ shouldFetch, setShouldFetched ] = useState(true);
     const [ jobs, setJobs ] = useState([]);
     const [ queryParams, setQueryParams ] = useState(Object.assign({}, defaultQueryParams));
     const [ queryUrl, setQueryUrl ] = useState("");
@@ -268,6 +269,7 @@ const JobList = (props) => {
                     setJobsFetched(true);
                     setJobs([]);
                 });
+            setShouldFetched(false);
         }, [
             queryParams, queryParamsToApiQuery, setJobs, setJobsFetched
         ]
@@ -389,16 +391,15 @@ const JobList = (props) => {
             if (queryUrl !== location.search) {
                 setQueryUrl(location.search);
                 setQueryParams(queryStringtoQueryParams(location.search));
-                setJobsFetched(false);
-                return;
+                setShouldFetched(true);
             }
 
-            if (!jobsFetched) {
+            if (shouldFetch) {
                 fetchJobs();
             }
 
         }, [
-            jobsFetched, fetchJobs,
+            shouldFetch, fetchJobs,
             setQueryParams, queryStringtoQueryParams,
             queryUrl, location.search
         ]
