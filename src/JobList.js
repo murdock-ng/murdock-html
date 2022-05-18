@@ -89,10 +89,18 @@ const JobSearch = (props) => {
                 <div className="input-group-text d-none d-sm-block" id="inputSearchAuthor"><i className="bi-person"></i></div>
                 <input type="text" className="form-control d-none d-sm-block" placeholder="Commit author" aria-label="Commit author" aria-describedby="inputSearchAuthor" value={props.queryParams.author} onChange={props.commitAuthorChanged} onKeyUp={props.keyUp} />
             </div>
-            {(props.queryParams.type === "pr") && <div className="input-group input-group-sm m-1" style={{maxWidth: "250px"}}>
-                <div className="input-group-text d-none d-sm-block" id="inputSearchPR">PR #</div>
-                <input type="text" className="form-control d-none d-sm-block" placeholder="PR number" aria-label="PR number" aria-describedby="inputSearchPR" value={props.queryParams.prnum} onChange={props.prNumberChanged} onKeyUp={props.keyUp} />
-            </div>}
+            {(props.queryParams.type === "pr") && <>
+                <div className="input-group input-group-sm m-1" style={{maxWidth: "250px"}}>
+                    <div className="input-group-text d-none d-sm-block" id="inputSearchPR">PR #</div>
+                    <input type="text" className="form-control d-none d-sm-block" placeholder="PR number" aria-label="PR number" aria-describedby="inputSearchPR" value={props.queryParams.prnum} onChange={props.prNumberChanged} onKeyUp={props.keyUp} />
+                </div>
+                <div className="btn-group btn-group-sm m-1" role="group">
+                    <input type="checkbox" className="btn-check" id="checkPrOpen" onChange={() => props.updatePrStates("open")} checked={props.queryParams.prstates.includes("open")} />
+                    <label className={"btn btn-outline-primary"} htmlFor="checkPrOpen" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.prstates.includes("open") ? "Hide" : "Show"} open PRs`}>Open</label>
+                    <input type="checkbox" className="btn-check" id="checkPrClosed" onChange={() => props.updatePrStates("closed")} checked={props.queryParams.prstates.includes("closed")} />
+                    <label className={"btn btn-outline-primary"} htmlFor="checkPrClosed" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.prstates.includes("closed") ? "Hide" : "Show"} closed PRs`}>Closed</label>
+                </div>
+            </>}
             {(props.queryParams.type === "branch") && <div className="input-group input-group-sm m-1" style={{maxWidth: "250px"}}>
                 <div className="input-group-text d-none d-sm-block" id="inputSearchBranch">Branch</div>
                 <input type="text" className="form-control d-none d-sm-block" placeholder="Branch name" aria-label="Branch name" aria-describedby="inputSearchBranch" value={props.queryParams.branch} onChange={props.branchChanged} onKeyUp={props.keyUp} />
@@ -324,6 +332,16 @@ const JobList = (props) => {
         history.push(`/${queryParamsToUrl(params)}`)
     }
 
+    const updatePrStates = (state) => {
+        let params = Object.assign({}, queryParams);
+        if (params.prstates.includes(state)) {
+            params.prstates = params.prstates.filter(elem => elem !== state)
+        } else {
+            params.prstates.push(state);
+        }
+        history.push(`/${queryParamsToUrl(params)}`)
+    }
+
     const prNumberChanged = (event) => {
         let params = Object.assign({}, queryParams);
         params.prnum = event.target.value;
@@ -392,6 +410,7 @@ const JobList = (props) => {
                 queryParams={queryParams}
                 updateJobType={updateJobType}
                 updateJobStates={updateJobStates}
+                updatePrStates={updatePrStates}
                 commitShaChanged={commitShaChanged}
                 commitAuthorChanged={commitAuthorChanged}
                 prNumberChanged={prNumberChanged}
