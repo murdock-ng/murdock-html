@@ -394,12 +394,12 @@ const JobList = (props) => {
                 setShouldFetched(true);
             }
 
-            if (shouldFetch) {
+            if (shouldFetch || !jobsFetched) {
                 fetchJobs();
             }
 
         }, [
-            shouldFetch, fetchJobs,
+            jobsFetched, shouldFetch, fetchJobs,
             setQueryParams, queryStringtoQueryParams,
             queryUrl, location.search
         ]
