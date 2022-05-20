@@ -58,17 +58,8 @@ const JobsTable = (props) => {
 
 const JobSearch = (props) => {
     return (
+        <div className="d-flex justify-content-between">
         <div className="btn-toolbar justify-content-left my-1" role="toolbar">
-            <div className="d-none d-sm-block">
-            <button className="btn btn-sm btn-outline-primary my-1 me-1" type="button" onClick={props.refresh}  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Refresh">
-            {props.fetchInProgress ? (
-                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            ) : (
-                <i className="bi-arrow-clockwise"></i>
-            )
-            }
-            </button>
-            </div>
             <div className="btn-group btn-group-sm m-1" role="group">
                 <input type="radio" name="jobTypeRadio" className="btn-check" id="checkAll" onChange={() => props.updateJobType("all")} checked={props.queryParams.type === "all"} />
                 <label className="btn btn-outline-primary" htmlFor="checkAll">All</label>
@@ -119,6 +110,15 @@ const JobSearch = (props) => {
                 <div className="input-group-text d-none d-sm-block" id="inputSearchTag">Tag</div>
                 <input type="text" className="form-control d-none d-sm-block" placeholder="Tag name" aria-label="Tag name" aria-describedby="inputSearchTag" value={props.queryParams.tag} onChange={props.tagChanged} onKeyUp={props.keyUp} />
             </div>}
+        </div>
+        {/* <button className="btn btn-sm text-primary d-none d-sm-block my-2" type="button" onClick={props.refresh}  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Refresh">
+            {props.fetchInProgress ? (
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            ) : (
+                <i className="bi-arrow-clockwise fw-bold"></i>
+            )
+            }
+        </button> */}
         </div>
     )
 }
