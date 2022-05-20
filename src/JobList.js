@@ -59,6 +59,14 @@ const JobsTable = (props) => {
 const JobSearch = (props) => {
     return (
         <div className="btn-toolbar justify-content-left my-1" role="toolbar">
+            <button className="btn btn-sm btn-outline-primary my-1 me-1" type="button" onClick={props.refresh}  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Refresh">
+            {props.fetchInProgress ? (
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            ) : (
+                <i className="bi-arrow-clockwise"></i>
+            )
+            }
+            </button>
             <div className="btn-group btn-group-sm m-1" role="group">
                 <input type="radio" name="jobTypeRadio" className="btn-check" id="checkAll" onChange={() => props.updateJobType("all")} checked={props.queryParams.type === "all"} />
                 <label className="btn btn-outline-primary" htmlFor="checkAll">All</label>
@@ -131,6 +139,7 @@ const JobList = (props) => {
 
     const [ jobsFetched, setJobsFetched ] = useState(false);
     const [ shouldFetch, setShouldFetched ] = useState(true);
+    const [ fetchInProgress, setFetchInProgress ] = useState(false);
     const [ jobs, setJobs ] = useState([]);
     const [ queryParams, setQueryParams ] = useState(Object.assign({}, defaultQueryParams));
     const [ queryUrl, setQueryUrl ] = useState("");
@@ -259,15 +268,18 @@ const JobList = (props) => {
 
     const fetchJobs = useCallback(
         () => {
+            setFetchInProgress(true);
             axios.get(`${murdockHttpBaseUrl}/jobs?${queryParamsToApiQuery(queryParams)}`)
                 .then(res => {
                     setJobsFetched(true);
                     setJobs(res.data);
+                    setFetchInProgress(false);
                 })
                 .catch(error => {
                     console.log(error);
                     setJobsFetched(true);
                     setJobs([]);
+                    setFetchInProgress(false);
                 });
             setShouldFetched(false);
         }, [
@@ -380,6 +392,10 @@ const JobList = (props) => {
         }
     }
 
+    const refresh = () => {
+        setShouldFetched(true);
+    }
+
     useEffect(
         () => {
             document.title = "Murdock - Dashboard";
@@ -418,6 +434,8 @@ const JobList = (props) => {
                 branchChanged={branchChanged}
                 tagChanged={tagChanged}
                 keyUp={keyUp}
+                refresh={refresh}
+                fetchInProgress={fetchInProgress}
             />
             {
                 (!jobsFetched) ? (
