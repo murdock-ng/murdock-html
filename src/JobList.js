@@ -59,6 +59,7 @@ const JobsTable = (props) => {
 const JobSearch = (props) => {
     return (
         <div className="btn-toolbar justify-content-left my-1" role="toolbar">
+            <div className="d-none d-sm-block">
             <button className="btn btn-sm btn-outline-primary my-1 me-1" type="button" onClick={props.refresh}  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Refresh">
             {props.fetchInProgress ? (
                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -67,6 +68,7 @@ const JobSearch = (props) => {
             )
             }
             </button>
+            </div>
             <div className="btn-group btn-group-sm m-1" role="group">
                 <input type="radio" name="jobTypeRadio" className="btn-check" id="checkAll" onChange={() => props.updateJobType("all")} checked={props.queryParams.type === "all"} />
                 <label className="btn btn-outline-primary" htmlFor="checkAll">All</label>
@@ -102,7 +104,7 @@ const JobSearch = (props) => {
                     <div className="input-group-text d-none d-sm-block" id="inputSearchPR">PR #</div>
                     <input type="text" className="form-control d-none d-sm-block" placeholder="PR number" aria-label="PR number" aria-describedby="inputSearchPR" value={props.queryParams.prnum} onChange={props.prNumberChanged} onKeyUp={props.keyUp} />
                 </div>
-                <div className="btn-group btn-group-sm m-1" role="group">
+                <div className="btn-group btn-group-sm d-none d-sm-block m-1" role="group">
                     <input type="checkbox" className="btn-check" id="checkPrOpen" onChange={() => props.updatePrStates("open")} checked={props.queryParams.prstates.includes("open")} />
                     <label className={"btn btn-outline-primary"} htmlFor="checkPrOpen" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.prstates.includes("open") ? "Hide" : "Show"} open PRs`}>Open</label>
                     <input type="checkbox" className="btn-check" id="checkPrClosed" onChange={() => props.updatePrStates("closed")} checked={props.queryParams.prstates.includes("closed")} />
