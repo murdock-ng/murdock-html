@@ -146,7 +146,7 @@ export const JobItem = (props) => {
         runningJobStatus = `fail: ${props.job.status.failed} pass: ${props.job.status.passed} done: ${jobsDone}/${props.job.status.total}`;
     }
 
-    let jobItemTitleTooltip = `Commit: ${props.job.commit.sha}\n\n${props.job.commit.message}`;
+    let jobItemTitleTooltip = `Commit: ${props.job.commit.sha}\n\n${props.job.commit.message}\n\nAuthor: ${props.job.commit.author}`;
     if (props.job.prinfo && props.job.prinfo.hasOwnProperty("is_merged") && props.job.prinfo.is_merged) {
         jobItemTitleTooltip += "\n\nState: merged"
     }
