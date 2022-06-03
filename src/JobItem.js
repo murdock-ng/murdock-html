@@ -167,21 +167,31 @@ export const JobItem = (props) => {
 
     return (
         <tr>
-            <td style={{ width: "30px" }}>
+            <td style={{ width: "30px" }} className="px-0">
                 {(props.small) ? (
-                    <a className="btn link-underline-hover p-0 text-primary" href={`/details/${props.job.uid}`}>{`${props.job.uid.substring(0, 4)}`}</a>
+                    <a className="link-underline-hover text-primary align-middle px-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+                        <span className="align px-1">
+                            {`${props.job.uid.substring(0, 4)}`}
+                        </span>
+                    </a>
                 ) : (
-                    <a className="btn link-underline-hover p-0 text-primary" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.job.uid}`}>{`${props.job.uid.substring(0, 7)}`}</a>
+                    <a className="link-underline-hover text-primary align-middle px-0" style={{width: "100%"}} href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.job.uid}`}>
+                        <span className="px-1">
+                            {`${props.job.uid.substring(0, 7)}`}
+                        </span>
+                    </a>
                 )
                 }
             </td>
-            <td style={{ width: "800px" }}>
-                <span className="align-middle text-break" data-bs-toggle="tooltip" data-bs-placement="bottom" title={jobItemTitleTooltip}>
+            <td style={{ width: "800px" }} className="px-0">
+                <div className="d-flex">
+                <a className="btn text-dark text-break text-start p-0" href={titleUrl} target="_blank" rel="noreferrer noopener" data-bs-toggle="tooltip" data-bs-placement="bottom" title={titleUrl}>
                     <i className={`bi-github ${githubIconColor} me-1`}></i>
-                    <a className="link-underline-hover text-dark me-1" href={titleUrl} target="_blank" rel="noreferrer noopener">
-                        {props.job.prinfo ? `PR #${props.job.prinfo.number}: ${title}`: `${title}`}
-                    </a>
-                </span>
+                </a>
+                <a className="btn flex-grow-1 text-dark text-break text-start p-0" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={jobItemTitleTooltip}>
+                    {props.job.prinfo ? `PR #${props.job.prinfo.number}: ${title}`: `${title}`}
+                </a>
+                </div>
             </td>
             <td style={{ width: "250px" }} className="px-0">
                 <a className="btn text-start p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
