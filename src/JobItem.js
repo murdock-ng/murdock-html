@@ -154,6 +154,10 @@ export const JobItem = (props) => {
         jobItemTitleTooltip += `\n\nState: ${props.job.prinfo.state}`
     }
 
+    if (props.job.prinfo && props.job.prinfo.hasOwnProperty("labels") && props.job.prinfo.labels.length > 0) {
+        jobItemTitleTooltip += `\n\nLabels: "${props.job.prinfo.labels.join('", "')}"`
+    }
+
     let githubIconColor = "text-dark";
     if (props.job.prinfo && props.job.prinfo.hasOwnProperty("is_merged") && props.job.prinfo.is_merged) {
         githubIconColor = "text-info";
