@@ -36,7 +36,7 @@ export const Result = (props) => {
         <>
         {hasDetailedinfo &&
         <div className="card my-1">
-            <button className="btn" type="button" onClick={toggleOutput} data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${outputVisible ? "Hide": "Show"} output`}>
+            <button className="btn btn-link text-dark text-decoration-none" type="button" onClick={toggleOutput} data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${outputVisible ? "Hide": "Show"} output`}>
                 <div className="row row-cols-sm-1">
                     {(props.withApplication) && (
                     <div className="col col-sm-3 text-start" style={{ minWidth: "250px"}}>

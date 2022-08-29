@@ -6,7 +6,7 @@ import { Result } from './Result';
 const Application = (props) => {
     return (
         <div className="card my-1">
-            <a className="btn" type="button" href={`/details/${props.uid}/builds/${props.name.replace("/", ":")}`}>
+            <a className="text-dark text-decoration-none m-2" type="button" href={`/details/${props.uid}/builds/${props.name.replace("/", ":")}`}>
             <div className="row justify-content-between">
                 <div className="col col-md-4 text-start">
                     <span className={`text-${cardColor[props.failures ? "errored" : "passed"]} me-2`}>{cardIcon[props.failures ? "errored" : "passed"]}</span>

@@ -185,16 +185,16 @@ export const JobItem = (props) => {
             </td>
             <td style={{ width: "800px" }} className="px-0">
                 <div className="d-flex">
-                <a className="btn text-dark text-break text-start p-0" href={titleUrl} target="_blank" rel="noreferrer noopener" data-bs-toggle="tooltip" data-bs-placement="bottom" title={titleUrl}>
+                <a className="text-dark text-decoration-none text-break text-start p-0" href={titleUrl} target="_blank" rel="noreferrer noopener" data-bs-toggle="tooltip" data-bs-placement="bottom" title={titleUrl}>
                     <i className={`bi-github ${githubIconColor} me-1`}></i>
                 </a>
-                <a className="btn flex-grow-1 text-dark text-break text-start p-0" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={jobItemTitleTooltip}>
+                <a className="flex-grow-1 text-dark text-decoration-none text-break text-start p-0" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={jobItemTitleTooltip}>
                     {props.job.prinfo ? `PR #${props.job.prinfo.number}: ${title}`: `${title}`}
                 </a>
                 </div>
             </td>
             <td style={{ width: "250px" }} className="px-0">
-                <a className="btn text-start p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+                <a className="text-dark text-decoration-none text-start p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
                 <DateShortElem date={jobDate} />
                 </a>
             </td>
@@ -202,7 +202,7 @@ export const JobItem = (props) => {
             <td className="text-center px-0" style={{ width: "250px" }}>
                 {(props.job.state === "running") && (
                     (buildInProgress) ? (
-                        <a className="btn align-middle" style={{width: "100%"}} href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={runningJobStatus}>
+                        <a className="text-dark text-decoration-none align-middle" style={{width: "100%"}} href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={runningJobStatus}>
                             {props.job.status.failed ? <i className="animate-flicker bi-exclamation-triangle me-1 text-danger"></i> : null}{`${moment.duration(props.job.status.eta, "seconds").humanize(true)} (${progressPercent}%)`}
                             <div className="progress position-relative" style={{height: "5px"}}>
                                 <div className={`progress-bar progress-bar-animated progress-bar-striped bg-${props.job.status.failed ? "danger" : "warning"}`} role="progressbar"
@@ -212,7 +212,7 @@ export const JobItem = (props) => {
                             </div>
                         </a>
                     ) : (
-                        <a className="btn p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+                        <a className="text-dark text-decoration-none p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
                         <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                         {(props.job.status && props.job.status.status) ? (
                         <span className="fst-italic">{`${props.job.status.status}...`}</span>
@@ -221,12 +221,12 @@ export const JobItem = (props) => {
                     )
                 )}
                 {["passed", "errored", "stopped"].includes(props.job.state) && (
-                    <a className="btn p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+                    <a className="text-dark text-decoration-none p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
                     <span>{`${moment.duration(props.job.runtime * -1000).humanize()}`}</span>
                     </a>
                 )}
                 {props.job.state === "queued" && (
-                    <a className="btn p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+                    <a className="text-dark text-decoration-none p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
                     <span>{" - "}</span>
                     </a>
                 )}
@@ -236,13 +236,13 @@ export const JobItem = (props) => {
                 {(props.permissions === "push") ? (
                     <div className="dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title={stateText[props.job.state]}>
                         {(props.small) ? (
-                        <button className="btn dropdown-toggle p-0 d-block d-sm-none" type="button" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a className="dropdown-toggle text-dark p-0 d-block d-sm-none" type="button" href="/" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
                         <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{cardIcon[props.job.state]}</span>
-                        </button>
+                        </a>
                         ) : (
-                        <button className="btn dropdown-toggle p-0 d-none d-sm-block" type="button" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a className="dropdown-toggle text-dark p-0 d-none d-sm-block" type="button" href="/" id="dropdownMenuActions" data-bs-toggle="dropdown" aria-expanded="false">
                         <span className={`badge text-${textColor[props.job.state]} bg-${cardColor[props.job.state]}`}>{stateText[props.job.state]}</span>
-                        </button>
+                        </a>
                         )}
                         <ul className="dropdown-menu dropdown-menu-end p-0" style={{minWidth: "20px"}} aria-labelledby="dropdownMenuActions">
                             {cancelAction}
