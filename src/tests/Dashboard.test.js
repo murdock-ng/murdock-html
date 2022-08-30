@@ -23,6 +23,7 @@
 
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
+import { act } from 'react-dom/test-utils';
 import { fireEvent, render, screen, waitFor} from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import WS from 'jest-websocket-mock';
@@ -126,8 +127,8 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 test('fetch and display pull requests', async () => {
-    await waitFor(() => render(<Dashboard />));
-    await waitFor(() => screen.queryByText((content, element) => {
+    await act(() => render(<Dashboard />));
+    await act(() => screen.queryByText((content, element) => {
         return element.className === "card m-2 border-info";
     }));
     expect(screen.getByText((content, element) => {
@@ -144,7 +145,7 @@ test('fetch and display pull requests', async () => {
     })).toBeNull();
 
     expect(screen.getByText('Show more')).toBeInTheDocument();
-    fireEvent.click(screen.getByText('Show more'));
+    fireEvent.click(screen.queryByText('Show more'));
     await waitFor(() => screen.getByText((content, element) => {
         return element.className === "card m-2 border-danger";
     }));

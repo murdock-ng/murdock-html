@@ -22,14 +22,13 @@
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import React from 'react';
 import Murdock from '../Murdock';
 
 test('murdock main page', async () => {
-    const {debug} = render(
-        <Murdock />
-    );
-    await waitFor(() => screen.getByText("Loading..."));
+    await act(() => render(<Murdock />));
+    await act(() => screen.getByText("Loading..."));
     expect(screen.getByText("Dashboard")).toBeDefined();
     expect(screen.getByText((content, element) => {
         return (
