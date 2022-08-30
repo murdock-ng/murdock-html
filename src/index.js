@@ -22,7 +22,7 @@
  */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -32,7 +32,5 @@ import './custom.scss';
 
 import Murdock from './Murdock';
 
-ReactDOM.render(
-  <Murdock />,
-  document.getElementById('root')
-);
+const root = createRoot(document.getElementById('root'));
+root.render(<Murdock />);
