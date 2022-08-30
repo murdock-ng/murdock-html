@@ -96,10 +96,10 @@ const JobSearch = (props) => {
                     <input type="text" className="form-control d-none d-sm-block" placeholder="PR number" aria-label="PR number" aria-describedby="inputSearchPR" value={props.queryParams.prnum} onChange={props.prNumberChanged} onKeyUp={props.keyUp} />
                 </div>
                 <div className="btn-group btn-group-sm d-none d-sm-block m-1" role="group">
-                    <input type="checkbox" className="btn-check" id="checkPrOpen" onChange={() => props.updatePrStates("open")} checked={props.queryParams.prstates.includes("open")} />
-                    <label className={"btn btn-outline-primary"} htmlFor="checkPrOpen" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.prstates.includes("open") ? "Hide" : "Show"} open PRs`}>Open</label>
-                    <input type="checkbox" className="btn-check" id="checkPrClosed" onChange={() => props.updatePrStates("closed")} checked={props.queryParams.prstates.includes("closed")} />
-                    <label className={"btn btn-outline-primary"} htmlFor="checkPrClosed" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.prstates.includes("closed") ? "Hide" : "Show"} closed PRs`}>Closed</label>
+                    <input type="checkbox" className="btn-check" id="checkPrOpen" onChange={() => props.updatePrStates("open")} checked={props.queryParams.prstates.open} />
+                    <label className={"btn btn-outline-primary"} htmlFor="checkPrOpen" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.prstates.open ? "Hide" : "Show"} open PRs`}>Open</label>
+                    <input type="checkbox" className="btn-check" id="checkPrClosed" onChange={() => props.updatePrStates("closed")} checked={props.queryParams.prstates.closed} />
+                    <label className={"btn btn-outline-primary"} htmlFor="checkPrClosed" data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.queryParams.prstates.closed ? "Hide" : "Show"} closed PRs`}>Closed</label>
                 </div>
             </>}
             {(props.queryParams.type === "branch") && <div className="input-group input-group-sm m-1" style={{maxWidth: "250px"}}>
@@ -128,7 +128,10 @@ const defaultQueryParams = {
     type: "all",
     states: ["queued", "running", "passed", "errored", "stopped"],
     prnum: "",
-    prstates: ["open", "closed"],
+    prstates: {
+        "open": true,
+        "closed": true,
+    },
     branch: "",
     tag: "",
     sha: "",
@@ -150,7 +153,14 @@ const JobList = (props) => {
         (params) => {
             let apiQuery = `limit=${params.limit}&states=${params.states.join("+")}`;
             if (params.type === "pr") {
-                apiQuery = `${apiQuery}&is_pr=true&prstates=${params.prstates.join("+")}`
+                let prstates = [];
+                if (params.prstates.open) {
+                    prstates.push("open");
+                }
+                if (params.prstates.closed) {
+                    prstates.push("closed");
+                }
+                apiQuery = `${apiQuery}&is_pr=true&prstates=${prstates.join("+")}`
             }
             if (params.type === "branch") {
                 apiQuery = `${apiQuery}&is_branch=true`
@@ -202,8 +212,11 @@ const JobList = (props) => {
                     }
                 }
                 else if (param === "prstates" && params.type === "pr") {
-                    if (value.length < 2) {
-                        paramQuery = `${param}=${value.join("+")}`
+                    if (value.open && !value.closed) {
+                        paramQuery = `${param}=open`
+                    }
+                    else if (!value.open && value.closed) {
+                        paramQuery = `${param}=closed`
                     }
                 }
                 else if (
@@ -246,7 +259,9 @@ const JobList = (props) => {
                     params.states = value.split(" ");
                 }
                 if (param === "prstates") {
-                    params.prstates = value.split(" ");
+                    const prstates = value.split(" ");
+                    params.prstates.open = prstates.includes("open");
+                    params.prstates.closed = prstates.includes("closed");
                 }
                 if (param === "prnum") {
                     params.prnum = value;
@@ -350,11 +365,18 @@ const JobList = (props) => {
 
     const updatePrStates = (state) => {
         let params = Object.assign({}, queryParams);
-        if (params.prstates.includes(state)) {
-            params.prstates = params.prstates.filter(elem => elem !== state)
-        } else {
-            params.prstates.push(state);
-        }
+        console.log("before:", params.prstates)
+        params.prstates[state] = !params.prstates[state]
+        // if (params.prstates === [""]) {
+        //     params.prstates = [state];
+        //     console.log("here")
+        // }
+        // if (params.prstates.includes(state)) {
+        //     params.prstates.pop(state);
+        // } else {
+        //     params.prstates.push(state);
+        // }
+        console.log("after:", params.prstates)
         history.push(`/${queryParamsToUrl(params)}`)
     }
 
