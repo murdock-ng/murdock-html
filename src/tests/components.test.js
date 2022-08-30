@@ -29,12 +29,14 @@ test('loading spinner', async () => {
     expect(screen.getByText('Loading...')).toBeDefined();
 })
 
+let value = 0;
+
 test('show more button', async () => {
-    render(<div><ShowMore onclick={() => {document.getElementById("test").innerHTML = "clicked"}} /><div id="test">test</div></div>);
-    expect(screen.getByText('Show more')).toBeDefined();
-    expect(screen.getByText('test')).toBeDefined();
-    fireEvent.click(screen.getByText('Show more'))
-    expect(screen.getByText('clicked')).toBeDefined();
+    const callback = () => { value = 42; };
+    render(<ShowMore onclick={callback} />);
+    expect(await screen.findByText('Show more')).toBeDefined();
+    fireEvent.click(await screen.findByText('Show more'))
+    expect(value).toBe(42);
 })
 
 test('link column', async () => {

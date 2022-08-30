@@ -21,23 +21,22 @@
  * Author: Alexandre Abadie <alexandre.abadie@inria.fr>
  */
 
-import { render, screen, waitFor } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import Murdock from '../Murdock';
 
 test('murdock main page', async () => {
-    await act(() => render(<Murdock />));
-    await act(() => screen.getByText("Loading..."));
-    expect(screen.getByText("Dashboard")).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    render(<Murdock />);
+    await screen.findByText("Loading...");
+    expect(await screen.findByText("Dashboard")).toBeDefined();
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "nav-link active" &&
             content === "Dashboard"
         );
     })).toBeDefined();
 
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "nav-link" &&
             content === "API"

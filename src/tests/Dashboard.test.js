@@ -23,7 +23,6 @@
 
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { act } from 'react-dom/test-utils';
 import { fireEvent, render, screen, waitFor} from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import WS from 'jest-websocket-mock';
@@ -127,49 +126,49 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 test('fetch and display pull requests', async () => {
-    await act(() => render(<Dashboard />));
-    await act(() => screen.queryByText((content, element) => {
+    render(<Dashboard />);
+    await screen.findByText((content, element) => {
         return element.className === "card m-2 border-info";
-    }));
-    expect(screen.getByText((content, element) => {
+    });
+    expect(await screen.findByText((content, element) => {
         return element.className === "card m-2 border-warning";
     })).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return element.className === "card m-2 border-info";
     })).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return element.className === "card m-2 border-success";
     })).toBeDefined();
     expect(screen.queryByText((content, element) => {
         return element.className === "card m-2 border-danger";
     })).toBeNull();
 
-    expect(screen.getByText('Show more')).toBeInTheDocument();
-    fireEvent.click(screen.queryByText('Show more'));
-    await waitFor(() => screen.getByText((content, element) => {
+    expect(await screen.findByText('Show more')).toBeInTheDocument();
+    fireEvent.click(await screen.findByText('Show more'));
+    await screen.findByText((content, element) => {
         return element.className === "card m-2 border-danger";
-    }));
+    });
 
     await waitFor(() => wsServer.send('{"cmd": "reload"}'));
-    await waitFor(() => screen.queryByText((content, element) => {
+    await screen.findByText((content, element) => {
         return element.className === "card m-2 border-info";
-    }));
-    expect(screen.getByText((content, element) => {
+    });
+    expect(await screen.findByText((content, element) => {
         return element.className === "card m-2 border-warning";
     })).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return element.className === "card m-2 border-info";
     })).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return element.className === "card m-2 border-success";
     })).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return element.className === "card m-2 border-danger";
     })).toBeDefined();
 
     // send pr_status command via websocket
     await waitFor(() => wsServer.send('{"cmd" : "status", "uid" : "12345", "status" : {"status": "working"}}'));
-    expect(screen.getByText("working")).toBeDefined();
+    expect(await screen.findByText("working")).toBeDefined();
 
     // smoke test to trigger the websocket client on close callback function
     await waitFor(() => wsServer.close());

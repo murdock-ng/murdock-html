@@ -23,7 +23,7 @@
 
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { fireEvent, render, screen, waitFor} from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import Nightlies from '../Nightlies';
@@ -52,17 +52,17 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 test('fetch and display basic nightlies', async () => {
-    await waitFor(() => render(<Nightlies />));
-    await waitFor(() => screen.getByText('master'));
+    render(<Nightlies />);
+    await screen.findByText('master');
 
     const dateErrored = new Date(1623550884.0 * 1000);
-    expect(screen.getByText(`${dateErrored.toLocaleString()}`)).toBeInTheDocument();
+    expect(await screen.findByText(`${dateErrored.toLocaleString()}`)).toBeInTheDocument();
 
     const dateSuccess = new Date(1623292442.0 * 1000);
     const dateSuccessString = `${dateSuccess.toLocaleString()}`
-    expect(screen.queryByText(dateSuccessString)).not.toBeInTheDocument();
-    expect(screen.getByText('Show more')).toBeInTheDocument();
+    await expect(screen.findByText(dateSuccessString)).rejects.toThrowError("Unable to find an element with the text");
+    expect(await screen.findByText('Show more')).toBeInTheDocument();
 
     fireEvent.click(screen.getByText('Show more'));
-    await waitFor(() => screen.getByText(dateSuccessString));
+    await screen.findByText(dateSuccessString);
 })

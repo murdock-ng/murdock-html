@@ -39,7 +39,7 @@ test('pull request success card title', async () => {
         output_url: "http://localhost/test",
     }
     render(<DashboardCardTitle jobType="passed" job={job} user={defaultLoginUser} />);
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "link-light link-underline-hover" &&
             element.href === "http://localhost/test" &&
@@ -59,7 +59,7 @@ test('pull request errored card title', async () => {
     }
 
     render(<DashboardCardTitle jobType="errored" job={job} user={defaultLoginUser} />);
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "link-light link-underline-hover" &&
             element.href === "http://localhost/test" &&
@@ -73,20 +73,18 @@ test('pull request errored card title', async () => {
 test('pull request running card title', async () => {
     const job = { prinfo: { title: "test" } };
     render(<DashboardCardTitle jobType="running" job={job} />);
-    expect(screen.getByText("test")).toBeDefined();
 
-    expect(screen.queryByText((content, element) => {
+    await expect(screen.findByText((content, element) => {
         return element.className === "link-light link-underline-hover" && element.href
-      })).toBeNull();
+      })).rejects.toThrowError("Unable to find an element with the text");
 })
 
 test('pull request queued card title', async () => {
     const job = { prinfo: { title: "test" } };
     render(<DashboardCardTitle title="test" jobType="queued" job={job} />);
-    expect(screen.getByText("test")).toBeDefined();
-    expect(screen.queryByText((content, element) => {
+    await expect(screen.findByText((content, element) => {
         return element.className === "link-light link-underline-hover" && element.href
-      })).toBeNull();
+      })).rejects.toThrowError("Unable to find an element with the text");
 })
 
 test('pull request success card info', async () => {
@@ -103,8 +101,8 @@ test('pull request success card info', async () => {
     }
     render(<DashboardCardInfo user="toto" jobType="passed" job={job} />);
 
-    expect(screen.getByText("toto")).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    await screen.findByText("toto");
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "link-underline-hover text-success" &&
             element.href === "http://localhost/test" &&
@@ -113,7 +111,7 @@ test('pull request success card info', async () => {
             content === "PR #12345"
         )
     })).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "link-underline-hover text-success" &&
             element.href === `https://github.com/${process.env.REACT_APP_GITHUB_REPO}/commit/56789abcdef` &&
@@ -123,9 +121,9 @@ test('pull request success card info', async () => {
         )
     })).toBeDefined();
 
-    expect(screen.queryByText((content, element) => {
+    await expect(screen.findByText((content, element) => {
         return element.className === "bi-clock me-1"
-    })).toBeNull();
+    })).rejects.toThrowError("Unable to find an element with the text");
 })
 
 test('pull request success with runtime card info', async () => {
@@ -142,7 +140,7 @@ test('pull request success with runtime card info', async () => {
         "runtime": "42.3"
     }
     render(<DashboardCardInfo user="toto" jobType="passed" job={job} />);
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "bi-clock me-1"
         )
@@ -162,14 +160,14 @@ test('pull request errored card info', async () => {
         "creation_time": "1234567"
     }
     render(<DashboardCardInfo user="toto" jobType="errored" job={job} />);
-    expect(screen.getByText("toto")).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText("toto")).toBeDefined();
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "link-underline-hover text-danger" &&
             content === "PR #12345"
         )
     })).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "link-underline-hover text-danger" &&
             content === "56789ab"
@@ -190,14 +188,14 @@ test('pull request running card info', async () => {
         "creation_time": "1234567"
     }
     render(<DashboardCardInfo user="toto" jobType="running" job={job} />);
-    expect(screen.getByText("toto")).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText("toto")).toBeDefined();
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "link-underline-hover text-primary" &&
             content === "PR #12345"
         )
     })).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return (
             element.className === "link-underline-hover text-primary" &&
             content === "56789ab"
@@ -209,48 +207,45 @@ test('pull request status null', async () => {
     const jobTypes = ["running", "errored", "passed", "queued"]
     for (let idx = 0; idx < jobTypes.length; ++idx ) {
         render(<DashboardCardStatus jobType={jobTypes[idx]} status="test" />);
-        expect(screen.queryByText((content, element) => {
+        await expect(screen.findByText((content, element) => {
             return element.className === "row";
-        })).toBeNull();
+        })).rejects.toThrowError("Unable to find an element with the text");
         cleanup();
     }
 })
 
 test('pull request status errored and canceled', async () => {
     render(<DashboardCardStatus jobType="errored" status={{"status": "canceled"}} />);
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return element.className === "row";
     })).toBeDefined();
-    expect(screen.getByText("canceled")).toBeDefined();
     expect(screen.getByRole("progressbar")).toBeDefined();
-    expect(screen.queryByText((content, element) => {
+    await expect(screen.findByText((content, element) => {
         return element.className === "bi-clock";
-    })).toBeNull();
+    })).rejects.toThrowError("Unable to find an element with the text");
 })
 
 test('pull request status running with string status', async () => {
-    render(<DashboardCardStatus jobType="running" status={{"status": "collecting jobs"}} />);
-    expect(screen.getByText((content, element) => {
+    render(<DashboardCardStatus jobType="running" status={{"status": "collecting jobs"}} />)
+    expect(await screen.findByText((content, element) => {
         return element.className === "row";
     })).toBeDefined();
-    expect(screen.getByText("collecting jobs")).toBeDefined();
     expect(screen.getByRole("progressbar")).toBeDefined();
-    expect(screen.queryByText((content, element) => {
+    await expect(screen.findByText((content, element) => {
         return element.className === "bi-clock";
-    })).toBeNull();
+    })).rejects.toThrowError("Unable to find an element with the text");
 })
 
 test('pull request status running with progress', async () => {
     render(<DashboardCardStatus jobType="running" status={{ "total": 123, "passed": 101, "failed": 2 , "eta": 42}} />);
-    expect(screen.queryByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return element.className === "row";
     })).toBeDefined();
-    expect(screen.getByText("fail: 2 pass: 101 done: 103/123")).toBeDefined();
     expect(screen.getByRole("progressbar")).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return element.className === "bi-bar-chart-line";
     })).toBeDefined();
-    expect(screen.getByText((content, element) => {
+    expect(await screen.findByText((content, element) => {
         return element.className === "bi-clock";
     })).toBeDefined();
 })
@@ -260,30 +255,30 @@ test('pull request failed jobs null', async () => {
     const job = {"prinfo": {"number": "12345"}, "status": ""}
     for (let idx = 0; idx < jobTypes.length; ++idx ) {
         render(<DashboardCardFailedJobs jobType={jobTypes[idx]} job={job} />);
-        expect(screen.queryByText((content, element) => {
+        await expect(screen.findByText((content, element) => {
             return content === "Job failures";
-        })).toBeNull();
-        expect(screen.queryByText((content, element) => {
+        })).rejects.toThrowError("Unable to find an element with the text");
+        await expect(screen.findByText((content, element) => {
             return element.className === "row";
-        })).toBeNull();
+        })).rejects.toThrowError("Unable to find an element with the text");
         cleanup();
     }
-})
+}, 10000)
 
 test('pull request failed jobs empty', async () => {
     const jobTypes = ["running", "errored", "passed", "queued"]
     const job = {"prinfo": {"number": "12345"}, "status": {"failed_jobs": []}}
     for (let idx = 0; idx < jobTypes.length; ++idx ) {
         render(<DashboardCardFailedJobs jobType={jobTypes[idx]} job={job} />);
-        expect(screen.queryByText((content, element) => {
+        await expect(screen.findByText((content, element) => {
             return content === "Job failures";
-        })).toBeNull();
-        expect(screen.queryByText((content, element) => {
+        })).rejects.toThrowError("Unable to find an element with the text");
+        await expect(screen.findByText((content, element) => {
             return element.className === "row";
-        })).toBeNull();
+        })).rejects.toThrowError("Unable to find an element with the text");
         cleanup();
     }
-})
+}, 10000)
 
 test('pull request failed jobs no href', async () => {
     const jobTypes = ["running", "errored"]
@@ -297,15 +292,15 @@ test('pull request failed jobs no href', async () => {
     }
     for (let idx = 0; idx < jobTypes.length; ++idx ) {
         render(<DashboardCardFailedJobs jobType={jobTypes[idx]} job={job} />);
-        expect(screen.getByText("Job failures (2)")).toBeDefined();
-        expect(screen.getByText((content, element) => {
+        expect(await screen.findByText("Job failures (2)")).toBeDefined();
+        expect(await screen.findByText((content, element) => {
             return (
                 element.className === "d-flex flex-wrap" &&
                 element.childNodes.length === 2
             );
         })).toBeDefined();
-        expect(screen.getByText("test1")).toBeDefined();
-        expect(screen.getByText("test2")).toBeDefined();
+        expect(await screen.findByText("test1")).toBeDefined();
+        expect(await screen.findByText("test2")).toBeDefined();
         expect(screen.queryAllByText((content, element) => {
             return (
                 element.className === "text-danger link-underline-hover"
@@ -330,15 +325,15 @@ test('pull request failed jobs with href', async () => {
     }
     for (let idx = 0; idx < jobTypes.length; ++idx ) {
         render(<DashboardCardFailedJobs jobType={jobTypes[idx]} job={job} />);
-        expect(screen.getByText("Job failures (2)")).toBeDefined();
-        expect(screen.getByText((content, element) => {
+        expect(await screen.findByText("Job failures (2)")).toBeDefined();
+        expect(await screen.findByText((content, element) => {
             return (
                 element.className === "d-flex flex-wrap" &&
                 element.childNodes.length === 2
             );
         })).toBeDefined();
-        expect(screen.getByText("test1")).toBeDefined();
-        expect(screen.getByText("test2")).toBeDefined();
+        expect(await screen.findByText("test1")).toBeDefined();
+        expect(await screen.findByText("test2")).toBeDefined();
         expect(screen.queryAllByText((content, element) => {
             return (
                 element.className === "text-danger link-underline-hover"
