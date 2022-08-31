@@ -173,13 +173,13 @@ export const JobItem = (props) => {
         <tr>
             <td style={{ width: "30px" }} className="px-0">
                 {(props.small) ? (
-                    <a className="link-underline-hover text-primary align-middle px-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
+                    <a className="link-underline-hover text-primary px-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
                         <span className="align px-1">
                             {`${props.job.uid.substring(0, 4)}`}
                         </span>
                     </a>
                 ) : (
-                    <a className="link-underline-hover text-primary align-middle px-0" style={{width: "100%"}} href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.job.uid}`}>
+                    <a className="link-underline-hover text-primary px-0" style={{width: "100%"}} href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={`${props.job.uid}`}>
                         <span className="px-1">
                             {`${props.job.uid.substring(0, 7)}`}
                         </span>
@@ -189,10 +189,10 @@ export const JobItem = (props) => {
             </td>
             <td style={{ width: "800px" }} className="px-0">
                 <div className="d-flex">
-                <a className="text-dark text-decoration-none text-break text-start p-0" href={titleUrl} target="_blank" rel="noreferrer noopener" data-bs-toggle="tooltip" data-bs-placement="bottom" title={titleUrl}>
+                <a className="text-dark text-decoration-none text-break text-start" href={titleUrl} target="_blank" rel="noreferrer noopener" data-bs-toggle="tooltip" data-bs-placement="bottom" title={titleUrl}>
                     <i className={`bi-github ${githubIconColor} me-1`}></i>
                 </a>
-                <a className="flex-grow-1 text-dark text-decoration-none text-break text-start p-0" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={jobItemTitleTooltip}>
+                <a className="flex-grow-1 text-dark text-decoration-none text-break text-start p-0 px-1" href={`/details/${props.job.uid}`} data-bs-toggle="tooltip" data-bs-placement="bottom" title={jobItemTitleTooltip}>
                     {props.job.prinfo ? `PR #${props.job.prinfo.number}: ${title}`: `${title}`}
                 </a>
                 </div>
