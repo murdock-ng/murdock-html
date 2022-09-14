@@ -513,8 +513,8 @@ const Job = (props) => {
     )
 
     const hasFailedTests = (
-        (buildFailures && buildFailures.length > 0) ||
-        (jobStatus && jobStatus.failed_builds && jobStatus.failed_builds.length > 0)
+        (testFailures && testFailures.length > 0) ||
+        (jobStatus && jobStatus.failed_tests && jobStatus.failed_tests.length > 0)
     )
 
     return (
@@ -586,7 +586,7 @@ const Job = (props) => {
                             {buildsTabAvailable && <JobBuilds uid={job.uid} builds={builds} buildFailures={buildFailures} job={job} status={jobStatus} stats={stats} />}
                         </div>
                         <div className={`tab-pane ${(activePanel === "tests") ? "show active" : ""}`} id="tests" role="tabpanel" aria-labelledby="tests-tab">
-                            {testsTabAvailable && <JobTests tests={tests} testFailures={testFailures} job={job} status={jobStatus} stats={stats} />}
+                            {testsTabAvailable && <JobTests uid={job.uid} tests={tests} testFailures={testFailures} job={job} status={jobStatus} stats={stats} />}
                         </div>
                         <div className={`tab-pane ${(activePanel === "details") ? "show active" : ""}`} id="details" role="tabpanel" aria-labelledby="details-tab">
                             {detailsTabAvailable && <JobDetails job={job} />}

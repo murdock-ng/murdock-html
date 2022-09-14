@@ -6,7 +6,7 @@ import { Result } from './Result';
 const Application = (props) => {
     return (
         <div className="card my-1">
-            <a className="text-dark text-decoration-none m-2" type="button" href={`/details/${props.uid}/builds/${props.name.replace("/", ":")}`}>
+            <a className="text-dark text-decoration-none m-2" type="button" href={`/details/${props.uid}/${props.type}/${props.name.replace("/", ":")}`}>
             <div className="row justify-content-between">
                 <div className="col col-md-4 text-start">
                     <span className={`text-${cardColor[props.failures ? "errored" : "passed"]} me-2`}>{cardIcon[props.failures ? "errored" : "passed"]}</span>
@@ -68,7 +68,7 @@ export const JobBuilds = (props) => {
                 </div>
             </div>
             <div className="card-body p-1">
-                {builds.map(build => <Application key={build.application} uid={props.uid} name={build.application} success={build.build_success} failures={build.build_failures} />)}
+                {builds.map(build => <Application key={build.application} type={"builds"} uid={props.uid} name={build.application} success={build.build_success} failures={build.build_failures} />)}
             </div>
         </div>}
         </>
@@ -79,7 +79,7 @@ export const JobTests = (props) => {
     const [filter, setFilter] = useState("");
     const [failuresFilter, setFailuresFilter] = useState("");
 
-    const tests = props.tests.filter(test => test.application.includes(filter));
+    const tests = (props.tests) ? props.tests.filter(test => test.application.includes(filter)) : [];
     const testFailures = (props.testFailures) ? props.testFailures.filter(test => (test.application.includes(failuresFilter) || test.target.includes(failuresFilter))) : [];
     const testFailuresLive = (props.status.failed_tests && props.status.failed_tests.length > 0) ? props.status.failed_tests.filter(build => build.application) : [];
 
@@ -120,7 +120,7 @@ export const JobTests = (props) => {
                 </div>
             </div>
             <div className="card-body">
-                {tests.map(test => <Application key={test.application} name={test.application} success={test.test_success} failures={test.test_failures} />)}
+                {tests.map(test => <Application key={test.application} type={"tests"} uid={props.uid} name={test.application} success={test.test_success} failures={test.test_failures} />)}
             </div>
         </div>
         </>
