@@ -119,7 +119,7 @@ export const JobTests = (props) => {
                     </div>
                 </div>
             </div>
-            <div className="card-body">
+            <div className="card-body p-1">
                 {tests.map(test => <Application key={test.application} type={"tests"} uid={props.uid} name={test.application} success={test.test_success} failures={test.test_failures} />)}
             </div>
         </div>
