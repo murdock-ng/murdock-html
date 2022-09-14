@@ -92,7 +92,7 @@ const ApplicationResults = (props) => {
                     <div className="row align-items-center">
                         <div className="col-md-8">{`${typeUpperCase}`}{(applicationData.jobs.length > 0) ? ` (${applicationData.jobs.length})` : ""}</div>
                         <div className="col-md-4">
-                            <input className="form-control pull-right" type="text" placeholder="Filter builds" onChange={(event) => {setFilter(event.target.value)}} />
+                            <input className="form-control pull-right" type="text" placeholder={`Filter ${props.type}`} onChange={(event) => {setFilter(event.target.value)}} />
                         </div>
                     </div>
                 </div>
