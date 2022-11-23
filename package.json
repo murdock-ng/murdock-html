@@ -16,6 +16,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.1",
     "react-social-login": "^3.4.15",
+    "react-use-websocket": "^4.2.0",
     "react-websocket": "^2.1.0",
     "sass": "^1.54.5"
   },

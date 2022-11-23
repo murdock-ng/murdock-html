@@ -23,7 +23,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import Websocket from 'react-websocket';
+import useWebSocket from 'react-use-websocket';
 import axios from 'axios';
 
 import { JobItem } from './JobItem';
@@ -143,7 +143,7 @@ const JobList = (props) => {
     const history = useHistory();
 
     const [ jobsFetched, setJobsFetched ] = useState(false);
-    const [ shouldFetch, setShouldFetched ] = useState(true);
+    const [ shouldFetch, setShouldFetch ] = useState(true);
     const [ fetchInProgress, setFetchInProgress ] = useState(false);
     const [ jobs, setJobs ] = useState([]);
     const [ queryParams, setQueryParams ] = useState(Object.assign({}, defaultQueryParams));
@@ -285,31 +285,38 @@ const JobList = (props) => {
 
     const fetchJobs = useCallback(
         () => {
-            setFetchInProgress(true);
-            axios.get(`${murdockHttpBaseUrl}/jobs?${queryParamsToApiQuery(queryParams)}`)
-                .then(res => {
-                    setJobsFetched(true);
-                    setJobs(res.data);
-                    setFetchInProgress(false);
-                })
-                .catch(error => {
-                    console.log(error);
-                    setJobsFetched(true);
-                    setJobs([]);
-                    setFetchInProgress(false);
-                });
-            setShouldFetched(false);
+            if (shouldFetch) {
+                setFetchInProgress(true);
+                axios.get(`${murdockHttpBaseUrl}/jobs?${queryParamsToApiQuery(queryParams)}`)
+                    .then(res => {
+                        setJobsFetched(true);
+                        setJobs(res.data);
+                        setFetchInProgress(false);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        setJobsFetched(true);
+                        setJobs([]);
+                        setFetchInProgress(false);
+                    });
+                setShouldFetch(false);
+            }
         }, [
-            queryParams, queryParamsToApiQuery, setJobs, setJobsFetched
+            queryParams, queryParamsToApiQuery, setJobs, setJobsFetched, setShouldFetch, shouldFetch
         ]
     )
 
-    const handleWsData = (data) => {
+    const onWsOpen = () => {
+        console.log('websocket opened');
+        setShouldFetch(true);
+    };
+
+    const onWsMessage = (event) => {
         if (!jobsFetched) {
             return;
         }
 
-        const msg = JSON.parse(data);
+        const msg = JSON.parse(event.data);
         if (msg.cmd === "reload") {
             fetchJobs();
         }
@@ -331,15 +338,14 @@ const JobList = (props) => {
             }
             setJobs(jobsTmp);
         }
-    }
+    };
 
-    const handleWsOpen = () => {
-        console.log("Websocket opened");
-    }
-
-    const handleWsClose = () => {
-        console.log("Websocket closed");
-    }
+    useWebSocket(murdockWsUrl, {
+      onOpen: () => onWsOpen(),
+      onClose: () => console.log("websocket closed"),
+      onMessage: (event) => onWsMessage(event),
+      shouldReconnect: (event) => true,
+    });
 
     const displayMore = () => {
         let params = Object.assign({}, queryParams);
@@ -417,7 +423,7 @@ const JobList = (props) => {
     }
 
     const refresh = () => {
-        setShouldFetched(true);
+        setShouldFetch(true);
     }
 
     useEffect(
@@ -431,7 +437,7 @@ const JobList = (props) => {
             if (queryUrl !== location.search) {
                 setQueryUrl(location.search);
                 setQueryParams(queryStringtoQueryParams(location.search));
-                setShouldFetched(true);
+                setShouldFetch(true);
             }
 
             if (shouldFetch || !jobsFetched) {
@@ -482,12 +488,6 @@ const JobList = (props) => {
                 )
             }
             {(jobsFetched && jobs.length >= queryParams.limit) ? <ShowMore onclick={displayMore} /> : null}
-            <Websocket
-                url={murdockWsUrl}
-                onOpen={handleWsOpen}
-                onMessage={handleWsData}
-                onClose={handleWsClose}
-            />
         </>
     )
 }

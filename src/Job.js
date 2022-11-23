@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 
-import Websocket from 'react-websocket';
+import useWebSocket from 'react-use-websocket';
 import { useState, useEffect, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 
@@ -374,8 +374,13 @@ const Job = (props) => {
         }, [job]
     );
 
-    const handleWsData = (data) => {
-        const msg = JSON.parse(data);
+    const onWsOpen = () => {
+        console.log('websocket opened');
+        fetchJob();
+    };
+
+    const onWsMessage = (event) => {
+        const msg = JSON.parse(event.data);
         if (msg.cmd === "reload") {
             fetchJob();
         }
@@ -393,15 +398,14 @@ const Job = (props) => {
             tmpOutput += msg.line;
             setJobOutput(tmpOutput);
         }
-    }
+    };
 
-    const handleWsOpen = () => {
-        console.log("Websocket opened");
-    }
-
-    const handleWsClose = () => {
-        console.log("Websocket closed");
-    }
+    useWebSocket(murdockWsUrl, {
+      onOpen: () => onWsOpen(),
+      onClose: () => console.log("websocket closed"),
+      onMessage: (event) => onWsMessage(event),
+      shouldReconnect: (event) => true,
+    });
 
     const refRepr = (ref) => {
         if (ref) {
@@ -415,11 +419,6 @@ const Job = (props) => {
       }
 
     useEffect(() => {
-        if (!fetched) {
-            fetchJob();
-            return;
-        }
-
         if (!job) {
             return;
         }
@@ -599,12 +598,6 @@ const Job = (props) => {
                         </div>
                     </div>
                 </div>
-                <Websocket
-                    url={murdockWsUrl}
-                    onOpen={handleWsOpen}
-                    onMessage={handleWsData}
-                    onClose={handleWsClose}
-                />
             </>
         ) : job && (
             <LoadingSpinner />
