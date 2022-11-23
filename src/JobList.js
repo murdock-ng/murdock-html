@@ -371,18 +371,7 @@ const JobList = (props) => {
 
     const updatePrStates = (state) => {
         let params = Object.assign({}, queryParams);
-        console.log("before:", params.prstates)
         params.prstates[state] = !params.prstates[state]
-        // if (params.prstates === [""]) {
-        //     params.prstates = [state];
-        //     console.log("here")
-        // }
-        // if (params.prstates.includes(state)) {
-        //     params.prstates.pop(state);
-        // } else {
-        //     params.prstates.push(state);
-        // }
-        console.log("after:", params.prstates)
         history.push(`/${queryParamsToUrl(params)}`)
     }
 
