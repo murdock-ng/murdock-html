@@ -318,7 +318,7 @@ const JobList = (props) => {
 
         const msg = JSON.parse(event.data);
         if (msg.cmd === "reload") {
-            fetchJobs();
+            setShouldFetch(true);
         }
         else if (msg.cmd === "status") {
             let jobsTmp = jobs.slice();
