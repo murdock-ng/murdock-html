@@ -221,6 +221,19 @@ const JobInfo = (props) => {
 
     const commitMsgLines = props.job.commit.message.split("\n");
 
+    const linkifyCommitMsg = (msg) => {
+        const issues = msg.match(/#\d+/i);
+        if (issues) {
+            for (let idx = 0; idx < issues.length; idx++) {
+                const link = `<a href="https://github.com/${process.env.REACT_APP_GITHUB_REPO}/issues/${issues[idx].replace('#', '')}" target="_blank" rel="noreferrer noopener">${issues[idx]}</a>`;
+                msg = msg.replace(issues[idx], link);
+            }
+            return <div dangerouslySetInnerHTML={{ __html: msg }} />;
+        }
+
+        return msg;
+    };
+
     let runtime = <div className="col col-md-2"></div>;
     if (props.job.state === "running" && props.status && props.status.eta) {
         runtime = <div className="col col-md-2"><i className="bi-clock"></i><span className="m-1">{moment.duration(props.status.eta, "seconds").humanize(true)}</span></div>;
@@ -243,14 +256,14 @@ const JobInfo = (props) => {
                 </div>
                 <div className="row align-items-center">
                     <div className="col">
-                        <i className="bi-card-text me-1"></i>{commitMsgLines[0]}
+                        <i className="bi-card-text me-1"></i>{linkifyCommitMsg(commitMsgLines[0])}
                         {(commitMsgLines.length > 1) && (
                         <>
                         <button className="btn btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCommitMsg" aria-expanded="false" aria-controls="collapseCommitMsg">
                             <i className="bi-arrows-angle-expand"></i>
                         </button>
                         <div className="collapse" id="collapseCommitMsg">
-                            {commitMsgLines.slice(1).map((line, index) => <div key={index} className="ms-4">{line}</div>)}
+                            {commitMsgLines.slice(1).map((line, index) => <div key={index} className="ms-4">{linkifyCommitMsg(line)}</div>)}
                         </div>
                         </>
                         )}
