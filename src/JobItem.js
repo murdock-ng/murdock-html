@@ -33,9 +33,11 @@ import { DateShortElem } from './components';
 export const JobItem = (props) => {
     const jobDate = new Date(props.job.creation_time * 1000);
 
-    const refRepr = (ref) => {
+    const refRepr = () => {
+        const ref = props.job.ref;
+        const commitMsgLines = props.job.commit.message.split("\n");
         if (ref && ref.startsWith("refs/")) {
-            return `${ref.split("/").slice(2).join("/")}`
+            return `${ref.split("/").slice(2).join("/")} @ ${commitMsgLines[0]}`
         }
         return ref.substring(0, 15);
     };
@@ -44,7 +46,7 @@ export const JobItem = (props) => {
     if (props.job.prinfo) {
         jobContext = `(PR #${props.job.prinfo.number})`;
     } else {
-        jobContext = `(${refRepr(props.job.ref)})`;
+        jobContext = `(${refRepr()})`;
     }
 
     const removeJob = (type) => {
@@ -120,7 +122,7 @@ export const JobItem = (props) => {
         </li>
     );
 
-    const title = (props.job.prinfo) ? props.job.prinfo.title : refRepr(props.job.ref);
+    const title = (props.job.prinfo) ? props.job.prinfo.title : refRepr();
     let titleUrl = "";
     if (props.job.prinfo) {
         titleUrl = props.job.prinfo.url;

@@ -17,9 +17,11 @@ const JobTitle = (props) => {
 
     const history = useHistory();
 
-    const refRepr = (ref) => {
+    const refRepr = () => {
+        const ref = props.job.ref;
+        const commitMsgLines = props.job.commit.message.split("\n");
         if (ref && ref.startsWith("refs/")) {
-            return `${ref.split("/").slice(2).join("/")}`
+            return `${ref.split("/").slice(2).join("/")} @ ${commitMsgLines[0]}`
         }
         return ref.substring(0, 15);
     };
@@ -28,7 +30,7 @@ const JobTitle = (props) => {
     if (props.job.prinfo) {
         jobContext = `(PR #${props.job.prinfo.number})`;
     } else {
-        jobContext = `(${refRepr(props.job.ref)})`;
+        jobContext = `(${refRepr()})`;
     }
 
     const removeJob = (type) => {
@@ -81,7 +83,7 @@ const JobTitle = (props) => {
         });
     };
 
-    const title = (props.job.prinfo) ? `PR #${props.job.prinfo.number}: ${props.job.prinfo.title}` : refRepr(props.job.ref)
+    const title = (props.job.prinfo) ? `PR #${props.job.prinfo.number}: ${props.job.prinfo.title}` : refRepr()
     let titleUrl = null;
     if (props.job.prinfo) {
         titleUrl = props.job.prinfo.url;
@@ -420,12 +422,20 @@ const Job = (props) => {
       shouldReconnect: (event) => true,
     });
 
-    const refRepr = (ref) => {
-        if (ref) {
-            return `${ref.split("/").slice(2).join("/")}`
+    const refRepr = useCallback(
+        () => {
+        if (!job) {
+            return "";
         }
-        return "";
-    };
+
+        const ref = job.ref;
+        const commitMsgLines = job.commit.message.split("\n");
+        if (ref && ref.startsWith("refs/")) {
+            return `${ref.split("/").slice(2).join("/")} @ ${commitMsgLines[0]}`
+        }
+        return ref.substring(0, 15);
+    }, [job]
+    );
 
     function getFaviconElement() {
         return document.getElementById("favicon");
@@ -456,7 +466,7 @@ const Job = (props) => {
             setActivePanel(props.tab);
         }
 
-        const jobInfo = (job.prinfo) ? `PR #${job.prinfo.number}` : refRepr(job.ref)
+        const jobInfo = (job.prinfo) ? `PR #${job.prinfo.number}` : refRepr()
         document.title = `Murdock - ${jobInfo} - ${job.commit.sha.slice(0, 7)}`;
 
         let favicon_href = "/favicon.png";
@@ -495,7 +505,7 @@ const Job = (props) => {
     }, [
         buildFailures, builds, fetchBuildFailures, fetchBuilds, fetchJob,
         fetchStats, fetchTestFailures, fetchTests, fetched, job, stats,
-        testFailures, tests, history, jobStatus, props.tab, props.url
+        testFailures, tests, history, jobStatus, props.tab, props.url, refRepr
     ]);
 
     const buildsTabAvailable = (
