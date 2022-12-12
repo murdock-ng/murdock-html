@@ -11,7 +11,7 @@ export const Result = (props) => {
 
     const outputUrl = `${murdockHttpBaseUrl}/results/${props.uid}/output/${props.type}/${props.result.application}/${props.result.target}:${props.result.toolchain}.txt`;
 
-    const hasDetailedinfo = props.result.target && props.result.toolchain && props.result.worker && props.result.runtime;
+    const hasDetailedinfo = props.result.target && props.result.toolchain && props.result.worker && (props.result.runtime !== undefined);
 
     const fetchOutput = useCallback(
         () => {
