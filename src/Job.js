@@ -224,7 +224,7 @@ const JobInfo = (props) => {
     const commitMsgLines = props.job.commit.message.split("\n");
 
     const linkifyCommitMsg = (msg) => {
-        const issues = msg.match(/#\d+/i);
+        const issues = msg.match(/#\d+/g);
         if (issues) {
             for (let idx = 0; idx < issues.length; idx++) {
                 const link = `<a href="https://github.com/${process.env.REACT_APP_GITHUB_REPO}/issues/${issues[idx].replace('#', '')}" target="_blank" rel="noreferrer noopener">${issues[idx]}</a>`;
