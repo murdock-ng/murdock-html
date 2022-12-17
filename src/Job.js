@@ -230,7 +230,7 @@ const JobInfo = (props) => {
                 const link = `<a href="https://github.com/${process.env.REACT_APP_GITHUB_REPO}/issues/${issues[idx].replace('#', '')}" target="_blank" rel="noreferrer noopener">${issues[idx]}</a>`;
                 msg = msg.replace(issues[idx], link);
             }
-            return <div dangerouslySetInnerHTML={{ __html: msg }} />;
+            return <span dangerouslySetInnerHTML={{ __html: msg }} />;
         }
 
         return msg;
