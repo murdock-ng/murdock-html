@@ -12,6 +12,7 @@ import { JobBuilds, JobTests } from './JobResults';
 import { JobOutput } from './JobOutput';
 import { JobStats } from './JobStats';
 import { JobArtifacts } from './JobArtifacts';
+import { preciseDuration } from './utils';
 
 const JobTitle = (props) => {
 
@@ -241,7 +242,7 @@ const JobInfo = (props) => {
         runtime = <div className="col col-md-2"><i className="bi-clock"></i><span className="m-1">{moment.duration(props.status.eta, "seconds").humanize(true)}</span></div>;
     }
     else if (props.job.state !== "running" && props.job.runtime !== undefined) {
-        runtime = <RuntimeCol runtime={moment.duration(props.job.runtime * -1000).humanize()} />;
+        runtime = <RuntimeCol runtime={preciseDuration(props.job.runtime)} />;
     }
 
     return (

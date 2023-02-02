@@ -28,6 +28,7 @@ import {
     cardColor, cardIcon, textColor, stateText, murdockHttpBaseUrl
 } from './constants';
 import { DateShortElem } from './components';
+import { preciseDuration } from './utils';
 
 
 export const JobItem = (props) => {
@@ -228,7 +229,7 @@ export const JobItem = (props) => {
                 )}
                 {["passed", "errored", "stopped"].includes(props.job.state) && (
                     <a className="text-dark text-decoration-none p-0" style={{width: "100%"}} href={`/details/${props.job.uid}`}>
-                    <span>{`${moment.duration(props.job.runtime * -1000).humanize()}`}</span>
+                    <span>{`${preciseDuration(props.job.runtime)}`}</span>
                     </a>
                 )}
                 {props.job.state === "queued" && (
