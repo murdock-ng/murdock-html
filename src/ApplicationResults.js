@@ -13,7 +13,7 @@ const ApplicationResults = (props) => {
     const [ filter, setFilter ] = useState("");
     const [ failuresFilter, setFailuresFilter ] = useState("");
 
-    const appPath = application.replace(":", "/");
+    const appPath = application.replaceAll(":", "/");
     const typeUpperCase = props.type.replace(/./, char => char.toUpperCase())
 
     const fetchApplicationData = useCallback(
