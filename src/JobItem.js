@@ -34,10 +34,15 @@ import { preciseDuration } from './utils';
 export const JobItem = (props) => {
     const jobDate = new Date(props.job.creation_time * 1000);
 
+    const isMergeQueue = props.job.ref && props.job.ref.startsWith("refs/") && props.job.ref.split("/").slice(2,3).join("/") === "gh-readonly-queue";
+
     const refRepr = () => {
         const ref = props.job.ref;
         const commitMsgLines = props.job.commit.message.split("\n");
         if (ref && ref.startsWith("refs/")) {
+            if (isMergeQueue) {
+                return `${commitMsgLines[0]} - Merge Queue`
+            }
             return `${ref.split("/").slice(2).join("/")} @ ${commitMsgLines[0]}`
         }
         return ref.substring(0, 15);
@@ -127,6 +132,9 @@ export const JobItem = (props) => {
     let titleUrl = "";
     if (props.job.prinfo) {
         titleUrl = props.job.prinfo.url;
+    } else if (isMergeQueue) {
+        const target_branch = props.job.ref.split("/").slice(3, 4)[0];
+        titleUrl = `https://github.com/${process.env.REACT_APP_GITHUB_REPO}/queue/${target_branch}`;
     } else if (props.job.ref && props.job.ref.startsWith("refs/")) {
         titleUrl = `https://github.com/${process.env.REACT_APP_GITHUB_REPO}/tree/${props.job.ref.split("/")[2]}`;
     } else {
