@@ -67,6 +67,7 @@ const MurdockNavBar = (props) => {
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href={`${process.env.REACT_APP_MURDOCK_HTTP_BASE_URL}/api`} target="_blank" rel="noopener noreferrer">API <i className="bi-box-arrow-up-right"></i></a>
+                            <a className="nav-link" href={`${process.env.REACT_APP_PRIVACY_URL}`} target="_blank" rel="noopener noreferrer">Privacy Policy <i className="bi-box-arrow-up-right"></i></a>
                         </li>
                     </ul>
                     <div className="d-flex align-items-center">
